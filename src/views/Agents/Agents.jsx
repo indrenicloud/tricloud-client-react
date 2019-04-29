@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   Card,
   CardBody,
@@ -8,65 +8,113 @@ import {
   Row,
   Col
 } from "reactstrap";
-import withAuth from 'components/Login/withAuth';
-import { thead } from 'variables/agents';
-import Api from 'service/Api';
+import withAuth from "components/Login/withAuth";
+import { thead } from "variables/agents";
+import Api from "service/Api";
+import './Agents.css';
+import NotificationAlert from "react-notification-alert";
+
 const api = new Api();
 class Agents extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      agents:null,
+      agents: null,
       agentsinfo: [],
-      agentsempty : true,
+      agentsempty: true
     };
+    this.handleDelete = this.handleDelete.bind(this);
+    this.notify = this.notify.bind(this);
   }
 
   componentDidMount() {
     this.getAgents();
   }
-  componentDidUpdate(){
-  
-  this.getAgents();
+  componentDidUpdate() {
+    this.getAgents();
+  }
 
-  } 
-
-  getAgents(){
-    api.getData('/api/agents').then(result=>{
+  getAgents() {
+    api.getData("/api/agents").then(result => {
       let agentsinfos = [];
-      if(result.data.length>0){
-      result.data.map(function(key){
-        const info = {
-          data : [key.id,key.systeminfo.os, key.systeminfo.hostname,key.owner, key.systeminfo.platform+" "+key.systeminfo.platformVersion, key.active?"Active":"Inactive"]
-        };
-        agentsinfos.push(info);
-        
-      })
-      this.setState({
-        agentsinfo:agentsinfos,
-        agentsempty : false,
-      });
-    }else{
-      this.setState({
-        agentsinfo: [],
-        agentsempty : true,
-      });
-    }
+      if (result.data.length > 0) {
+        result.data.map(function(key) {
+          const info = {
+            data: [
+              key.id,
+              key.systeminfo.os,
+              key.systeminfo.hostname,
+              key.owner,
+              key.systeminfo.platform + " " + key.systeminfo.platformVersion,
+              key.active ? "Active" : "Inactive"
+            ]
+          };
+          agentsinfos.push(info);
+        });
+        this.setState({
+          agentsinfo: agentsinfos,
+          agentsempty: false
+        });
+      } else {
+        this.setState({
+          agentsinfo: [],
+          agentsempty: true
+        });
+      }
     });
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.setState({
-      agentsempty : true,
+      agentsempty: true
     });
   }
-    render() { 
-      let emptyinfo;
-      if(this.state.agentsempty){
-        emptyinfo= <div><center>Agent not found</center></div>;
+
+  handleDelete(prop) {
+    var agentID = prop.data[0];
+    api.deleteData("/api/agents/"+agentID).then(result=>{
+      if(result.status==="ok"){
+        console.log(result.status);
+        this.notify("tr", "Successfully delete agent "+agentID);
       }
-        return (
-          <div className="content">
+    });
+  }
+ 
+  onDismiss() {}
+  notify(place, msg) {
+    var type = "success";
+    var options = {};
+    options = {
+      place: place,
+      message: (
+        <div>
+          <div>
+            {msg}
+          </div>
+        </div>
+      ),
+      type: type,
+      icon: "nc-icon nc-bell-55",
+      autoDismiss: 7
+    };
+    this.refs.notificationAlert.notificationAlert(options);
+}
+  render() {
+
+
+    let emptyinfo;
+    if (this.state.agentsempty) {
+      emptyinfo = (
+        <div>
+          <center>Agent not found</center>
+        </div>
+      );
+    }
+
+    return (
+      
+      <div className="content">
+       <NotificationAlert ref="notificationAlert" />
         <Row>
           <Col xs={12}>
             <Card>
@@ -95,20 +143,32 @@ class Agents extends Component {
                           {prop.data.map((prop, key) => {
                             return <td key={key}>{prop}</td>;
                           })}
+                          <td>
+                            <div className="row">
+                              <div className="col action">
+                                <i className="nc-icon nc-button-play text-success"  />
+                              </div>
+                              <div className="col action">
+                                <i className="nc-icon nc-sound-wave text-warning" />
+                              </div>
+                              <div className="col action">
+                                <i className="nc-icon nc-simple-remove text-danger" onClick={()=>this.handleDelete(prop)} />
+                              </div>
+                            </div>
+                          </td>
                         </tr>
                       );
                     })}
                   </tbody>
-                  
                 </Table>
                 {emptyinfo}
               </CardBody>
             </Card>
           </Col>
         </Row>
-      </div>    
-        );
-    }
+      </div>
+    );
+  }
 }
- 
+
 export default withAuth(Agents);

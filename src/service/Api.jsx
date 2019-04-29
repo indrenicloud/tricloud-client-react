@@ -18,6 +18,13 @@ export default class Api {
 
     }
 
+    deleteData(route) {
+        return this.fetch(this.API_URL+route, {
+            method: 'DELETE'
+        })
+
+    }
+
     fetch(url, options) {
         // performs api calls sending the required authentication headers
         const headers = {
