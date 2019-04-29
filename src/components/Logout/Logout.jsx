@@ -1,5 +1,5 @@
 import React from "react";
-import AuthService from '../Login/AuthService';
+import AuthService from 'service/AuthService';
 import withAuth from '../Login/withAuth';
 const Auth = new AuthService();
 
