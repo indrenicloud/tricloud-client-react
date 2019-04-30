@@ -6,7 +6,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import Header from "components/Header/Header.jsx";
 import Footer from "components/Footer/Footer.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
-
+import AgentDetail from "views/AgentDetail/AgentDetail";
 import dashboardRoutes from "routes/dashboard.jsx";
 
 var ps;
@@ -55,16 +55,21 @@ class Dashboard extends React.Component {
         />
         <div className="main-panel" ref="mainPanel">
           <Header {...this.props} />
-          <Switch>
+          <Switch>          
+            <Route path="/agents/:agentId" component={AgentDetail} />
+
             {dashboardRoutes.map((prop, key) => {
               if (prop.redirect) {
                 return <Redirect from={prop.path} to={prop.pathTo} key={key} />;
               }
+
               return (
                 <Route path={prop.path} component={prop.component} key={key} />
               );
             })}
+
           </Switch>
+
           <Footer fluid />
         </div>
      

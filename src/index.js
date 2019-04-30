@@ -15,6 +15,7 @@ ReactDOM.render(
     <Switch>
      <Route exact path="/login" name="Login" component={Login}></Route>
      <Route path="/" name="Dashboard" component={Dashboard}></Route>
+     
     </Switch>
   </Router>,
   document.getElementById("root")
