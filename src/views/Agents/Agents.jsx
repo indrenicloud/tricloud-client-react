@@ -11,8 +11,9 @@ import {
 import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
-import './Agents.css';
+import "./Agents.css";
 import NotificationAlert from "react-notification-alert";
+import Agentpage from "views/Agentpage/Agentpage.jsx";
 
 const api = new Api();
 class Agents extends Component {
@@ -31,7 +32,7 @@ class Agents extends Component {
     this.getAgents();
   }
   componentDidUpdate() {
-    this.getAgents();
+    //this.getAgents();
   }
 
   getAgents() {
@@ -72,14 +73,15 @@ class Agents extends Component {
 
   handleDelete(prop) {
     var agentID = prop.data[0];
-    api.deleteData("/api/agents/"+agentID).then(result=>{
-      if(result.status==="ok"){
+    api.deleteData("/api/agents/" + agentID).then(result => {
+      if (result.status === "ok") {
         console.log(result.status);
-        this.notify("tr", "Successfully delete agent "+agentID);
+        this.notify("tr", "Successfully delete agent " + agentID);
+        this.getAgents();
       }
     });
   }
- 
+
   onDismiss() {}
   notify(place, msg) {
     var type = "success";
@@ -88,9 +90,7 @@ class Agents extends Component {
       place: place,
       message: (
         <div>
-          <div>
-            {msg}
-          </div>
+          <div>{msg}</div>
         </div>
       ),
       type: type,
@@ -98,10 +98,8 @@ class Agents extends Component {
       autoDismiss: 7
     };
     this.refs.notificationAlert.notificationAlert(options);
-}
+  }
   render() {
-
-
     let emptyinfo;
     if (this.state.agentsempty) {
       emptyinfo = (
@@ -110,63 +108,73 @@ class Agents extends Component {
         </div>
       );
     }
+    let path = this.props.history.location.pathname;
 
     return (
-      
-      <div className="content">
-       <NotificationAlert ref="notificationAlert" />
-        <Row>
-          <Col xs={12}>
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">List of Agents</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      {thead.map((prop, key) => {
-                        if (key === thead.length - 1)
-                          return (
-                            <th key={key} className="text-right">
-                              {prop}
-                            </th>
-                          );
-                        return <th key={key}>{prop}</th>;
+      (path == "/agents" && (
+        <div className="content">
+          <NotificationAlert ref="notificationAlert" />
+          <Row>
+            <Col xs={12}>
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h4">List of Agents</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <Table responsive>
+                    <thead className="text-primary">
+                      <tr>
+                        {thead.map((prop, key) => {
+                          if (key === thead.length - 1)
+                            return (
+                              <th key={key} className="text-right">
+                                {prop}
+                              </th>
+                            );
+                          return <th key={key}>{prop}</th>;
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.agentsinfo.map((prop, key) => {
+                        return (
+                          <tr key={key}>
+                            {prop.data.map((prop, key) => {
+                              return <td key={key}>{prop}</td>;
+                            })}
+                            <td>
+                              <div className="row">
+                                <div className="col action">
+                                  <i className="nc-icon nc-button-play text-success" />
+                                </div>
+                                <div className="col action">
+                                  <i className="nc-icon nc-sound-wave text-warning" />
+                                </div>
+                                <div className="col action">
+                                  <i
+                                    className="nc-icon nc-simple-remove text-danger"
+                                    onClick={() => this.handleDelete(prop)}
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        );
                       })}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.agentsinfo.map((prop, key) => {
-                      return (
-                        <tr key={key}>
-                          {prop.data.map((prop, key) => {
-                            return <td key={key}>{prop}</td>;
-                          })}
-                          <td>
-                            <div className="row">
-                              <div className="col action">
-                                <i className="nc-icon nc-button-play text-success"  />
-                              </div>
-                              <div className="col action">
-                                <i className="nc-icon nc-sound-wave text-warning" />
-                              </div>
-                              <div className="col action">
-                                <i className="nc-icon nc-simple-remove text-danger" onClick={()=>this.handleDelete(prop)} />
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-                {emptyinfo}
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+                    </tbody>
+                  </Table>
+                  {emptyinfo}
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      )) ||
+      (path != "/agents" && (
+        <div className="content">
+          <Agentpage name={path} />
+        </div>
+      ))
     );
   }
 }

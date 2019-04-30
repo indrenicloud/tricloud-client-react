@@ -49,35 +49,44 @@ class Sidebar extends React.Component {
           <a
             href="https://github.com/indrenicloud"
             className="simple-text logo-normal"
-          >
-            TriCloud          </a>
+          />
         </div>
         <div className="sidebar-wrapper" ref="sidebar">
           <Nav>
             {this.props.routes.map((prop, key) => {
               if (prop.redirect) return null;
+              if (!prop.routes) {
+                prop.routes = [];
+              }
               return (
-                <li
-                  className={
-                    this.activeRoute(prop.path) +
-                    (prop.pro ? " active-pro" : "")
-                  }
-                  key={key}
-                >
-                  <NavLink
-                    to={prop.path}
-                    className="nav-link"
-                    activeClassName="active"
+                <React.Fragment key={key}>
+                  <li
+                    className={
+                      this.activeRoute(prop.path) +
+                      (prop.pro ? " active-pro" : "")
+                    }
+                    key={key}
                   >
-                    <i className={prop.icon} />
-                    <p>{prop.name}</p>
-                  </NavLink>
-                </li>
+                    <NavLink
+                      to={prop.path}
+                      className="nav-link"
+                      activeClassName="active"
+                    >
+                      <i className={prop.icon} />
+                      <p>{prop.name}</p>
+                    </NavLink>
+                  </li>
+                  <ul>
+                    {prop.routes.map(r => (
+                      <li key={r.name}>
+                        <a href={r.path}>{r.name}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </React.Fragment>
               );
             })}
           </Nav>
-
-          
         </div>
       </div>
     );

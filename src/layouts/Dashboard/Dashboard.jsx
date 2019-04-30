@@ -6,19 +6,56 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import Header from "components/Header/Header.jsx";
 import Footer from "components/Footer/Footer.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
+import Api from "service/Api";
+import Agentpage from "views/Agentpage/Agentpage.jsx";
 
 import dashboardRoutes from "routes/dashboard.jsx";
 
 var ps;
+const api = new Api();
 
 class Dashboard extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       backgroundColor: "black",
-      activeColor: "info"
-    }
+      activeColor: "info",
+      routes: dashboardRoutes
+    };
+    this.updateAgentList = this.updateAgentList.bind(this);
+    this.updateAgentList();
   }
+  updateAgentList() {
+    api.getData("/api/agents").then(result => {
+      let alist = [];
+      if (result.data.length > 0) {
+        result.data.forEach(function(key) {
+          alist.push(key.id);
+        });
+        let newroutes = [];
+        dashboardRoutes.forEach(route => {
+          if (route.name === "Agents") {
+            route["routes"] = [];
+            alist.forEach(kagent => {
+              let subroute = {
+                path: "/agents/" + kagent,
+                name: kagent,
+                //icon: "nc-icon nc-bank",
+                component: Agentpage
+              };
+              route["routes"].push(subroute);
+            });
+          }
+          newroutes.push(route);
+        });
+        window.newroutes = newroutes;
+        this.setState({
+          routes: newroutes
+        });
+      }
+    });
+  }
+
   componentDidMount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.refs.mainPanel);
@@ -37,26 +74,25 @@ class Dashboard extends React.Component {
       document.scrollingElement.scrollTop = 0;
     }
   }
-  handleActiveClick = (color) => {
+  handleActiveClick = color => {
     this.setState({ activeColor: color });
-  }
-  handleBgClick = (color) => {
+  };
+  handleBgClick = color => {
     this.setState({ backgroundColor: color });
-  }
+  };
   render() {
     return (
-
       <div className="wrapper">
         <Sidebar
           {...this.props}
-          routes={dashboardRoutes}
+          routes={this.state.routes}
           bgColor={this.state.backgroundColor}
           activeColor={this.state.activeColor}
         />
         <div className="main-panel" ref="mainPanel">
           <Header {...this.props} />
           <Switch>
-            {dashboardRoutes.map((prop, key) => {
+            {this.state.routes.map((prop, key) => {
               if (prop.redirect) {
                 return <Redirect from={prop.path} to={prop.pathTo} key={key} />;
               }
@@ -67,7 +103,6 @@ class Dashboard extends React.Component {
           </Switch>
           <Footer fluid />
         </div>
-     
       </div>
     );
   }
