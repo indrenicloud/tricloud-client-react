@@ -31,7 +31,7 @@ class Agents extends Component {
     this.getAgents();
   }
   componentDidUpdate() {
-    this.getAgents();
+    // this.getAgents();
   }
 
   getAgents() {
@@ -70,13 +70,18 @@ class Agents extends Component {
     });
   }
 
-  handleDelete(prop) {
+  handleDelete(prop,key) {
     var agentID = prop.data[0];
     api.deleteData("/api/agents/"+agentID).then(result=>{
       if(result.status==="ok"){
         console.log(result.status);
         this.notify("tr", "Successfully delete agent "+agentID);
       }
+      var agentsinfo = this.state.agentsinfo;
+      delete agentsinfo[key];
+      this.setState({
+        agentsinfo: agentsinfo,
+      })
     });
   }
  
@@ -152,7 +157,7 @@ class Agents extends Component {
                                 <i className="nc-icon nc-sound-wave text-warning" />
                               </div>
                               <div className="col action">
-                                <i className="nc-icon nc-simple-remove text-danger" onClick={()=>this.handleDelete(prop)} />
+                                <i className="nc-icon nc-simple-remove text-danger" onClick={()=>this.handleDelete(prop, key)} />
                               </div>
                             </div>
                           </td>
