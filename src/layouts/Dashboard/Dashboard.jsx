@@ -97,7 +97,17 @@ class Dashboard extends React.Component {
                 return <Redirect from={prop.path} to={prop.pathTo} key={key} />;
               }
               return (
-                <Route path={prop.path} component={prop.component} key={key} />
+                <Route
+                  path={prop.path}
+                  key={key}
+                  render={p => (
+                    <prop.component
+                      {...p}
+                      routes={prop.routes}
+                      rname={prop.name}
+                    />
+                  )}
+                />
               );
             })}
           </Switch>

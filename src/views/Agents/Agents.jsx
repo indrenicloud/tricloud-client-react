@@ -109,6 +109,7 @@ class Agents extends Component {
       );
     }
     let path = this.props.history.location.pathname;
+    console.log(this.props);
 
     return (
       (path == "/agents" && (
@@ -172,7 +173,7 @@ class Agents extends Component {
       )) ||
       (path != "/agents" && (
         <div className="content">
-          <Agentpage name={path} />
+          <Agentpage name={path} {...this.props} />
         </div>
       ))
     );
