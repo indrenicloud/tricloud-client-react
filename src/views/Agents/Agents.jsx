@@ -32,7 +32,7 @@ class Agents extends Component {
     this.getAgents();
   }
   componentDidUpdate() {
-    //this.getAgents();
+    this.getAgents();
   }
 
   getAgents() {
