@@ -46,19 +46,15 @@ class AgentDetail extends Component {
     });
   }
 
-  webSocketRespone(data) {
-    console.log(data);
-    console.log(typeof data);
-    //let rawhead = data.substring(data.length - 4, data.length);
-    //console.log(Number(rawhead.substring(0, 2)));
-    // console.log();
-    // let dv = new DataView(data);
-    // let uint16 = dv.getUint16(0);
-    //console.log(uint16);
-    //var buf = new ArrayBuffer(4)
-    //let bufview = new Uint16Array(buf);
-    //buf[0] = rawhead.chaCodeAt(0);
-    //buf[1] = rawhead.chaCodeAt(1);
+  webSocketRespone(event) {
+    console.log(event);
+    console.log(typeof event);
+    let myReader = new FileReader();
+    myReader.readAsArrayBuffer(event);
+
+    myReader.addEventListener("loadend", function(e) {
+      parsePacket(e.srcElement.result);
+    });
   }
 
   render() {
@@ -118,6 +114,42 @@ class AgentDetail extends Component {
       </div>
     );
   }
+}
+
+function parsePacket(arrbuf) {
+  //let ubuff = new Uint8Array(data);
+  console.log(arrbuf);
+  let offset = arrbuf.byteLength - 4;
+  let headerbuf = arrbuf.slice(offset, arrbuf.byteLength);
+  let headerdataview = new DataView(headerbuf, 0);
+  let connid = headerdataview.getUint8(0);
+  let flow = headerdataview.getUint8(2);
+  let cmdtype = headerdataview.getUint8(3);
+
+  //string/json
+  var response;
+  let bodybuff = arrbuf.slice(0, offset);
+  let bodydataview = new DataView(bodybuff);
+
+  if ("TextDecoder" in window) {
+    var decoder = new TextDecoder("utf-8");
+    response = JSON.parse(decoder.decode(bodydataview));
+  } else {
+    console.log("OLD BROWSER");
+    let decodedString = String.fromCharCode.apply(
+      null,
+      new Uint8Array(bodybuff)
+    );
+    response = JSON.parse(decodedString);
+  }
+  let header = {
+    connid: connid,
+    flow: flow,
+    cmdtype: cmdtype
+  };
+  console.log(header);
+  console.log(response);
+  return header, response;
 }
 
 export default AgentDetail;
