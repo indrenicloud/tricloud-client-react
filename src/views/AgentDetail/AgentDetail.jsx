@@ -47,18 +47,9 @@ class AgentDetail extends Component {
   }
 
   webSocketRespone(data) {
-    console.log(data);
-    console.log(typeof data);
-    //let rawhead = data.substring(data.length - 4, data.length);
-    //console.log(Number(rawhead.substring(0, 2)));
-    // console.log();
-    // let dv = new DataView(data);
-    // let uint16 = dv.getUint16(0);
-    //console.log(uint16);
-    //var buf = new ArrayBuffer(4)
-    //let bufview = new Uint16Array(buf);
-    //buf[0] = rawhead.chaCodeAt(0);
-    //buf[1] = rawhead.chaCodeAt(1);
+    let decoded_data = decodeURIComponent(encodeURIComponent(data).replace("%03%00%01%02", ""));
+    console.log(JSON.parse(decoded_data));
+    console.log(typeof decoded_data);
   }
 
   render() {
