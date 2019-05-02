@@ -123,8 +123,8 @@ function parsePacket(arrbuf) {
   let headerbuf = arrbuf.slice(offset, arrbuf.byteLength);
   let headerdataview = new DataView(headerbuf, 0);
   let connid = headerdataview.getUint8(0);
-  let flow = headerdataview.getUint8(2);
-  let cmdtype = headerdataview.getUint8(3);
+  let cmdtype = headerdataview.getUint8(2);
+  let flow = headerdataview.getUint8(3);
 
   //string/json
   var response;
@@ -150,6 +150,21 @@ function parsePacket(arrbuf) {
   console.log(header);
   console.log(response);
   return header, response;
+}
+
+function encodeMsg(msgstr, connid, cmdtype, flowtype) {
+  let headUarr = new Uint8Array([connid, 0, cmdtype, flowtype]);
+  let bodyUarray;
+  if ("TextDecoder" in window) {
+    let json = JSON.stringify(msgstr);
+    let encoder = new TextEncoder();
+    bodyUarray = encoder.encode(json);
+  } else {
+    console.log("OLD Browser");
+  }
+  let combined = new Uint8Array([...bodyUarray, ...headUarr]);
+
+  return combined.buffer;
 }
 
 export default AgentDetail;
