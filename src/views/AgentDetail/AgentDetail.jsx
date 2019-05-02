@@ -207,12 +207,11 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                  <Terminal />       
+                    <Terminal/>
                   </Col>
                 </Row>
               </CardBody>
               <CardFooter>
-                <hr />
               </CardFooter>
             </Card>
           </Col>
