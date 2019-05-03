@@ -21,7 +21,7 @@ class Terminal extends Component {
 
   outputFromAgent(output) {
     console.log("VERY NEAR:", output);
-    //this.xterm.write(output)
+    this.xterm.write(output);
   }
 
   componentDidMount() {

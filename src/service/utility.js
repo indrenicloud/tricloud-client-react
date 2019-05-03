@@ -22,7 +22,9 @@ export function parsePacket(arrbuf) {
 
   if ("TextDecoder" in window) {
     var decoder = new TextDecoder("utf-8");
-    response = JSON.parse(decoder.decode(bodydataview));
+    let rawstr = decoder.decode(bodydataview);
+    console.log("RAWSTR:", rawstr);
+    response = JSON.parse(rawstr);
   } else {
     console.log("OLD BROWSER");
     let decodedString = String.fromCharCode.apply(

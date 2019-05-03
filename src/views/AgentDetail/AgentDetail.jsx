@@ -45,9 +45,11 @@ class AgentDetail extends Component {
     this.terminalToWs = this.terminalToWs.bind(this);
     this.ProcessTerminal = this.ProcessTerminal.bind(this);
     this.ProcessSystemStat = this.ProcessSystemStat.bind(this);
+    this.startTerminal = this.startTerminal.bind(this);
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
     this.cpumem_usage = {};
+    this.head = {};
   }
 
   componentDidMount() {
@@ -71,6 +73,7 @@ class AgentDetail extends Component {
     myReader.readAsArrayBuffer(event);
     myReader.addEventListener("loadend", e => {
       let [head, body] = parsePacket(e.srcElement.result);
+      this.head = head;
       console.log(head, body);
       switch (head.cmdtype) {
         case CMD_SYSTEM_STAT:
@@ -87,7 +90,8 @@ class AgentDetail extends Component {
   }
 
   ProcessTerminal(header, body) {
-    this.terminalRef.current.outputFromAgent(body);
+    console.log("VERY NEAR", body);
+    this.terminalRef.current.outputFromAgent(body.Data);
   }
 
   ProcessSystemStat(respHead, respBody) {
@@ -124,7 +128,15 @@ class AgentDetail extends Component {
     });
   }
 
-  terminalToWs(data) {}
+  startTerminal() {
+    let out = encodeMsg({ Data: "" }, this.head.connid, CMD_TERMINAL, 1);
+    this.websocketRef.current.sendMessage(out);
+  }
+
+  terminalToWs(data) {
+    let out = encodeMsg({ Data: data }, this.head.connid, CMD_TERMINAL, 1);
+    this.websocketRef.current.sendMessage(out);
+  }
 
   render() {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
@@ -218,6 +230,11 @@ class AgentDetail extends Component {
             </Card>
           </Col>
         </Row>
+        <input
+          type="button"
+          onClick={this.startTerminal}
+          name="Terminal start"
+        />
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
             <Card>
@@ -238,6 +255,7 @@ class AgentDetail extends Component {
 
         <Websocket
           url={"ws://localhost:8080/websocket/" + api.getToken()}
+          ref={this.websocketRef}
           onMessage={this.webSocketResponse.bind(this)}
         />
       </div>
