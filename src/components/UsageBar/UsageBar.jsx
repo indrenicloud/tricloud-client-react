@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from "react";
 import * as d3 from "d3";
+import "./usagebar.css";
+
 class UsageBar extends Component {
   constructor(props) {
     super(props);
@@ -9,7 +11,7 @@ class UsageBar extends Component {
   componentDidMount() {
     let componentheight = document.getElementById("realcpu_usage").clientHeight;
     let componentwidth = document.getElementById("realcpu_usage").clientWidth;
-    this.displayDCPU(componentheight, componentwidth);
+    this.displayDCPU(componentheight, componentwidth, false);
   }
   componentDidUpdate() {
     let componentheight = document.getElementById("realcpu_usage").clientHeight;
@@ -17,9 +19,16 @@ class UsageBar extends Component {
     this.displayDCPU(componentheight, componentwidth);
   }
 
-  displayDCPU(height, width) {
+  displayDCPU(height, width, _redraw = true) {
     let data = this.props.data;
     console.log(data);
+
+    console.log(this.props.data);
+    if (_redraw) {
+      redraw(data);
+      return;
+    }
+    generate(data, "#docker-cpu-rect-d3");
 
     //generation function
     function generate(data, id) {
@@ -59,13 +68,13 @@ class UsageBar extends Component {
       }
 
       svg.selectAll(".dockerCpuText").remove();
-
+      /*
       svg
         .append("text")
         .attr("class", "dockerCpuText")
         .attr("x", 0)
         .attr("y", height * 0.8 + margin.top)
-        .text(data + "%");
+        .text(data + "%"); */
     }
 
     function redraw(data) {
@@ -81,18 +90,15 @@ class UsageBar extends Component {
         d3.select("#docker_cpu_rect_" + (i + 1)).style("fill", "#f3f3f3");
       }
 
-      d3.select(".dockerCpuText").text(data + "%");
+      //d3.select(".dockerCpuText").text(data + "%");
     }
-    console.log(this.props.data);
-    generate(data, "#docker-cpu-rect-d3");
-    redraw(data);
   }
   render() {
     return (
       <div
         id={"docker-cpu-rect-d3"}
         key={this.divref}
-        style={{ height: 200 + "px" }}
+        style={{ height: 150 + "px" }}
       />
     );
   }

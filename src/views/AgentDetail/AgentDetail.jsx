@@ -170,13 +170,18 @@ class AgentDetail extends Component {
     );
 
     //console.log(api.getToken());
+    //dashboard-level
     return (
       <div className="content">
         <Row>
           <Col xs={12} sm={6} md={6} lg={5}>
             <Card>
-              <h1>CPU Usage</h1>
               <CardBody>
+                <Row>
+                  <Col>
+                    <h2 className={"card-title cpu_usage_title"}>CPU USAGE</h2>
+                  </Col>
+                </Row>
                 <Row>
                   <Col id="realcpu_usage">
                     <UsageBar data={this.state.avgcpu_usage} />
@@ -185,20 +190,9 @@ class AgentDetail extends Component {
               </CardBody>
               <CardFooter>
                 <hr />
-                <ol>{this.state.realcpu_usage}</ol>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col xs={12} sm={6} md={6} lg={4}>
-            <Card>
-              <CardBody>
-                <Row>
-                  <Col />
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                {realmem_usage}
+                <ol className={"cpu_usage"}>
+                  {Math.round(this.state.realcpu_usage) + "%"}
+                </ol>
               </CardFooter>
             </Card>
           </Col>
