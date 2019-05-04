@@ -7,15 +7,15 @@ class UsageBar extends Component {
   }
 
   componentDidMount() {
-    let componentheight = this.divref.current.clientWidth;
-    let componentwidth = this.divref.current.clientWidth;
+    let componentheight = document.getElementById("realcpu_usage").clientHeight;
+    let componentwidth = document.getElementById("realcpu_usage").clientWidth;
     this.displayDCPU(componentheight, componentwidth);
   }
-  // componentDidUpdate() {
-  //   let componentheight = this.divref.current.clientWidth;
-  //   let componentwidth = this.divref.current.clientWidth;
-  //   this.displayDCPU(componentheight, componentwidth);
-  // }
+  componentDidUpdate() {
+    let componentheight = document.getElementById("realcpu_usage").clientHeight;
+    let componentwidth = document.getElementById("realcpu_usage").clientWidth;
+    this.displayDCPU(componentheight, componentwidth);
+  }
 
   displayDCPU(height, width) {
     let data = this.props.data;
@@ -83,16 +83,18 @@ class UsageBar extends Component {
 
       d3.select(".dockerCpuText").text(data + "%");
     }
-
+    console.log(this.props.data);
     generate(data, "#docker-cpu-rect-d3");
     redraw(data);
   }
   render() {
-    const els = this.props.data.array.forEach((element, key) => {
-      <div id={"docker-cpu-rect-d3" + key} style={{ height: 200 + "px" }} />;
-    });
-
-    return <React.Fragment>{els}</React.Fragment>;
+    return (
+      <div
+        id={"docker-cpu-rect-d3"}
+        key={this.divref}
+        style={{ height: 200 + "px" }}
+      />
+    );
   }
 }
 
