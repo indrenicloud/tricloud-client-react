@@ -106,7 +106,8 @@ class AgentDetail extends Component {
       });
     }
 
-    let avgcpu_usage;
+    let core1 = this.cpumem_usage["CPUPercent"][0];
+    /*
     let realcpu_usage = Object.entries(this.state.realcpumem_usage).map(
       ([key, value]) => {
         if (key === "CPUPercent") {
@@ -120,11 +121,11 @@ class AgentDetail extends Component {
           });
         }
       }
-    );
+    ); */
 
     this.setState({
-      avgcpu_usage: avgcpu_usage,
-      realcpu_usage: realcpu_usage
+      avgcpu_usage: core1,
+      realcpu_usage: core1
     });
   }
 
@@ -192,9 +193,7 @@ class AgentDetail extends Component {
             <Card>
               <CardBody>
                 <Row>
-                  <Col>
-                    <UsageBar />
-                  </Col>
+                  <Col />
                 </Row>
               </CardBody>
               <CardFooter>

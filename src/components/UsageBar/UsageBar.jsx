@@ -3,32 +3,32 @@ import * as d3 from "d3";
 class UsageBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-        data :0,
-    };
+    this.divref = React.createRef();
   }
 
   componentDidMount() {
-    let componentheight = document.getElementById("realcpu_usage").clientHeight;
-    let componentwidth = document.getElementById("realcpu_usage").clientWidth;   
-    this.displayDCPU(componentheight,componentwidth);
+    let componentheight = this.divref.current.clientWidth;
+    let componentwidth = this.divref.current.clientWidth;
+    this.displayDCPU(componentheight, componentwidth);
   }
+  // componentDidUpdate() {
+  //   let componentheight = this.divref.current.clientWidth;
+  //   let componentwidth = this.divref.current.clientWidth;
+  //   this.displayDCPU(componentheight, componentwidth);
+  // }
 
-  displayDCPU(height,width) {
-    var data = 25;
-    this.setState(
-        {   
-        data:this.props.data,
-        }
-    )
- 
+  displayDCPU(height, width) {
+    let data = this.props.data;
+    console.log(data);
+
     //generation function
-    function generate(data,id) {
+    function generate(data, id) {
       const margin = { top: 45, right: 10, bottom: 45, left: 10 };
-        height = height - margin.left - margin.right
-        width = width - margin.top - margin.bottom;
+      height = height - margin.left - margin.right;
+      width = width - margin.top - margin.bottom;
 
-      var svg = d3.select(id)
+      var svg = d3
+        .select(id)
         .append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
@@ -48,12 +48,14 @@ class UsageBar extends Component {
       var temp = Math.floor(data / 5);
       if (temp === 0 && data !== 0) temp = 1;
 
-      for (; i < temp; i++) {
-        svg.select("#docker_cpu_rect_" + (i + 1)).style("fill", "#00afff");
-      }
-
       for (; i < 20; i++) {
         svg.select("#docker_cpu_rect_" + (i + 1)).style("fill", "#f3f3f3");
+      }
+
+      var j = 0;
+      for (; j < temp; j++) {
+        console.log("coloring stuff");
+        svg.select("#docker_cpu_rect_" + (j + 1)).style("fill", "#fff");
       }
 
       svg.selectAll(".dockerCpuText").remove();
@@ -66,10 +68,7 @@ class UsageBar extends Component {
         .text(data + "%");
     }
 
-    //redraw function
     function redraw(data) {
-
-      //format of time data
       var i = 0;
       var temp = Math.floor(data / 5);
       if (temp === 0 && data !== 0) temp = 1;
@@ -85,23 +84,15 @@ class UsageBar extends Component {
       d3.select(".dockerCpuText").text(data + "%");
     }
 
-    //inits chart
-    var sca = new generate(data, "#docker-cpu-rect-d3");
-    let newdata = this.state.data;
-    //dynamic data and chart update
-    setInterval(function() {
-        //update donut data
-        data = newdata;
-        console.log(data);
-
-        redraw(data);
-      }, 1500);
+    generate(data, "#docker-cpu-rect-d3");
+    redraw(data);
   }
   render() {
-    
-    return (
-    <div id="docker-cpu-rect-d3" style={{height: 200 + 'px'}}></div>
-    );
+    const els = this.props.data.array.forEach((element, key) => {
+      <div id={"docker-cpu-rect-d3" + key} style={{ height: 200 + "px" }} />;
+    });
+
+    return <React.Fragment>{els}</React.Fragment>;
   }
 }
 
