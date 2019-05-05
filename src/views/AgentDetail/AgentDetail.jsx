@@ -20,6 +20,7 @@ import Stats from "components/Stats/Stats.jsx";
 import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
+import './AgentDetail.css';
 import {
   parsePacket,
   encodeMsg,
@@ -38,7 +39,7 @@ class AgentDetail extends Component {
       systeminfo: {},
       realcpumem_usage: {},
       avgcpu_usage: 0,
-      realcpu_usage: null
+      allcpu_usage: []
     };
     this.getAgentData = this.getAgentData.bind(this);
     this.webSocketResponse = this.webSocketResponse.bind(this);
@@ -96,37 +97,16 @@ class AgentDetail extends Component {
 
   ProcessSystemStat(respHead, respBody) {
     this.cpumem_usage = respBody;
-    // if (typeof this.cpumem_usage !== "object") {
-    //   this.setState({
-    //     realcpumem_usage: {}
-    //   });
-    // } else {
-    //   this.setState({
-    //     realcpumem_usage: this.cpumem_usage
-    //   });
-    // }
-
-    let cores = this.cpumem_usage["CPUPercent"][0];
-    let avgcpu_usage
-    let realcpu_usage = Object.entries(this.cpumem_usage).map(
-      ([key, value]) => {
-        if (key === "CPUPercent") {
-          let totalcpu_usage = value.reduce(
-            (previous, current) => (current += previous)
-          );
-          avgcpu_usage = Math.round(totalcpu_usage / value.length);
-          return value.map((v, i) => {
-            console.log("vale",v)
-            return <li>{Math.round(v)}%</li>
-          });
-        }
-      }
-    ); 
-    console.log(realcpu_usage);
-
+    let cpu_cores = this.cpumem_usage["CPUPercent"];
+    let totalcpu_usage = cpu_cores.reduce(
+      (previous, current) => (current += previous)
+    );
+    let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
+    let allcpu_usage = cpu_cores;
+    
     this.setState({
       avgcpu_usage: avgcpu_usage,
-      realcpu_usage : realcpu_usage,
+      allcpu_usage : allcpu_usage,
     });
   }
 
@@ -180,7 +160,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h2 className={"card-title cpu_usage_title"}>CPU USAGE</h2>
+                    <h3 className={"card-title cpu_usage_title"}>CPU USAGE</h3>
                   </Col>
                 </Row>
                 <Row>
@@ -190,10 +170,17 @@ class AgentDetail extends Component {
                 </Row>
               </CardBody>
               <CardFooter>
+                  <h3>{this.state.avgcpu_usage}%</h3>
                 <hr />
-                <ol className={"cpu_usage"}>
-                  {this.state.realcpu_usage}
-                </ol>
+                <span>Total CPU Cores :{this.state.allcpu_usage.length}</span>
+                <ul id="allcpu_usage" className={"allcpu_usage"}>
+
+                  {
+                    Object.keys(this.state.allcpu_usage).map(key => {
+                      return <li>{Math.round(this.state.allcpu_usage[key])}% </li>
+                    })
+                  }
+                </ul>
               </CardFooter>
             </Card>
           </Col>
