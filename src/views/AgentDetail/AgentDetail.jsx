@@ -23,7 +23,7 @@ import Api from "service/Api";
 import "./AgentDetail.css";
 import Moment from 'react-moment';
 import 'moment-timezone';
-
+import MemDonut from 'components/MemDonut/MemDonut';
 import {
   parsePacket,
   encodeMsg,
@@ -201,6 +201,26 @@ class AgentDetail extends Component {
                     </h3>
                   </Col>
                 </Row>
+              </CardFooter>
+            </Card>
+          </Col>
+          <Col xs={12} sm={6} md={6} lg={5}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
+                    <div id="mem_usagebar">
+                      <MemDonut/>
+                    </div>
+                    
+                  </Col>
+                </Row>
+                {/* <div className="stats">
+                  
+                </div> */}
+              </CardBody>
+              <CardFooter>
               </CardFooter>
             </Card>
           </Col>
