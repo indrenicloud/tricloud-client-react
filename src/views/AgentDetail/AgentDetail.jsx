@@ -20,7 +20,7 @@ import Stats from "components/Stats/Stats.jsx";
 import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
-import './AgentDetail.css';
+import "./AgentDetail.css";
 import {
   parsePacket,
   encodeMsg,
@@ -103,10 +103,10 @@ class AgentDetail extends Component {
     );
     let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
     let allcpu_usage = cpu_cores;
-    
+
     this.setState({
       avgcpu_usage: avgcpu_usage,
-      allcpu_usage : allcpu_usage,
+      allcpu_usage: allcpu_usage
     });
   }
 
@@ -160,27 +160,34 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title cpu_usage_title"}>CPU USAGE</h3>
+                    <h3 className={"card-title cpu_usage_title"}>CPU Usage</h3>
+                    <div id="cpu_usagebar">
+                      <UsageBar data={this.state.avgcpu_usage} />
+                    </div>
+                    
                   </Col>
                 </Row>
-                <Row>
-                  <Col id="realcpu_usage">
-                    <UsageBar data={this.state.avgcpu_usage} />
-                  </Col>
-                </Row>
+                <div className="stats">
+                  <span>
+                    Total CPU Cores : {this.state.allcpu_usage.length}
+                  </span>
+                  <ul id="allcpu_usage" className={"allcpu_usage"}>
+                    {Object.keys(this.state.allcpu_usage).map(key => {
+                      return (
+                        <li>{Math.round(this.state.allcpu_usage[key])}% </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </CardBody>
               <CardFooter>
-                  <h3>{this.state.avgcpu_usage}%</h3>
-                <hr />
-                <span>Total CPU Cores :{this.state.allcpu_usage.length}</span>
-                <ul id="allcpu_usage" className={"allcpu_usage"}>
-
-                  {
-                    Object.keys(this.state.allcpu_usage).map(key => {
-                      return <li>{Math.round(this.state.allcpu_usage[key])}% </li>
-                    })
-                  }
-                </ul>
+                <Row>
+                  <Col>
+                    <h3 className="avgcpu_stats center">
+                      {this.state.avgcpu_usage}%{" "}
+                    </h3>
+                  </Col>
+                </Row>
               </CardFooter>
             </Card>
           </Col>
@@ -211,11 +218,11 @@ class AgentDetail extends Component {
             </Card>
           </Col>
         </Row>
-        <input
+        {/* <input
           type="button"
           onClick={this.startTerminal}
           name="Terminal start"
-        />
+        /> */}
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
             <Card>

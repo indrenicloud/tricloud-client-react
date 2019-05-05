@@ -9,13 +9,13 @@ class UsageBar extends Component {
   }
 
   componentDidMount() {
-    let componentheight = document.getElementById("realcpu_usage").clientHeight;
-    let componentwidth = document.getElementById("realcpu_usage").clientWidth;
+    let componentheight = document.getElementById("cpu_usagebar").clientHeight;
+    let componentwidth = document.getElementById("cpu_usagebar").clientWidth;
     this.displayDCPU(componentheight, componentwidth, false);
   }
   componentDidUpdate() {
-    let componentheight = document.getElementById("realcpu_usage").clientHeight;
-    let componentwidth = document.getElementById("realcpu_usage").clientWidth;
+    let componentheight = document.getElementById("cpu_usagebar").clientHeight;
+    let componentwidth = document.getElementById("cpu_usagebar").clientWidth;
     this.displayDCPU(componentheight, componentwidth);
   }
 
@@ -32,9 +32,9 @@ class UsageBar extends Component {
 
     //generation function
     function generate(data, id) {
-      const margin = { top: 45, right: 10, bottom: 45, left: 10 };
-      height = height - margin.left - margin.right;
-      width = width - margin.top - margin.bottom;
+      const margin = { top: 10, right: 0, bottom: 10, left: 10 };
+      height = height - margin.top - margin.bottom;
+      width = width -margin.left - margin.right;
 
       var svg = d3
         .select(id)
@@ -98,7 +98,7 @@ class UsageBar extends Component {
       <div
         id={"docker-cpu-rect-d3"}
         key={this.divref}
-        style={{ height: 150 + "px" }}
+        style={{ height: 120 + "px" }}
       />
     );
   }

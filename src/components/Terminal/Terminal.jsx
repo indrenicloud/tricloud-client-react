@@ -26,7 +26,7 @@ class Terminal extends Component {
 
   componentDidMount() {
     this.xterm.open(this.myref.current);
-    this.xterm.write("Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ");
+    this.xterm.write("TriCloud \x1B[1;3;31mTerminal\x1B[0m $ ");
     this.xterm.on("data", this.onMessage);
   }
 
