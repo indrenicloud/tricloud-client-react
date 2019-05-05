@@ -21,6 +21,7 @@ class UsageBar extends Component {
 
   displayDCPU(height, width, _redraw = true) {
     let data = this.props.data;
+    
     console.log(data);
 
     console.log(this.props.data);

@@ -4,46 +4,51 @@ import * as scale from "d3-scale";
 export default class MemDonut extends Component {
   constructor(props) {
     super(props);
-    this.height = this.props.height;
-    this.width = this.props.width;
+    // this.height = this.props.height;
+    // this.width = this.props.width;
     // this.height = 160;
     // this.width = 200;
     this.displayMem = this.displayMem.bind(this);
     this.arc = null;
     this.path = null;
+   
+    
   }
 
   componentDidMount() {
     let componentheight = document.getElementById("mem_usagebar").clientHeight;
-    let componentwidth = document.getElementById("mem_usagebar").clientWidth;
+    let componentwidth = document.getElementById("mem_usagebar").clientWidth;    
     this.displayMem(componentheight, componentwidth, false);
   }
   componentDidUpdate() {
     let componentheight = document.getElementById("mem_usagebar").clientHeight;
     let componentwidth = document.getElementById("mem_usagebar").clientWidth;
+  
     this.displayMem(componentheight, componentwidth);
   }
 
   displayMem(cheight,cwidth, _redraw=true) {
-    var data = [
-      { inits: "Total", value: 100 },
-      { inits: "Available", value: 40 },
-      { inits: "Free", value: 60 }
-    ];
-
-    var category = ["Total", "Available", "Free"],
-      cateColor = ["#fff799", "#ffee00", "#0068b7"];
-
+    
+    let total_mem = this.props.memory[0].total;
+    let free_mem = this.props.memory[1].free;
+    let data = [
+        { inits: 'Total', value:total_mem},
+        { inits:'Free',value:free_mem },
+      ];
+    console.log("asdasda",data);
+    var category = ["Total", "Free"],
+      cateColor = ["#fff799", "#0068b7"];
+    
+    
+    var sca = new generate(data, "#sensor-cpu-donut-d3");
+    this.path = sca.getPath();
+    this.arc = sca.getArc();
     //inits chart
     if (_redraw) {
       redraw(data, this.path, this.arc);
       return;
-    }
-
-    var sca = new generate(data, "#sensor-cpu-donut-d3");
-    this.path = sca.getPath();
-    this.arc = sca.getArc();
-
+  }
+  
     //generation function
     function generate(data, id) {
       const margin = {
@@ -230,6 +235,6 @@ export default class MemDonut extends Component {
   }
 
   render() {
-    return <div id={"sensor-cpu-donut-d3"} style={{ height: "370px" }} />;
+    return <div id={"sensor-cpu-donut-d3"} style={{ height: "280px" }} />;
   }
 }

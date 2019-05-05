@@ -42,7 +42,7 @@ class AgentDetail extends Component {
       systeminfo: {},
       realcpumem_usage: {},
       avgcpu_usage: 0,
-      allcpu_usage: []
+      allcpu_usage: [],
     };
     this.getAgentData = this.getAgentData.bind(this);
     this.webSocketResponse = this.webSocketResponse.bind(this);
@@ -106,10 +106,10 @@ class AgentDetail extends Component {
     );
     let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
     let allcpu_usage = cpu_cores;
-
+   
     this.setState({
       avgcpu_usage: avgcpu_usage,
-      allcpu_usage: allcpu_usage
+      allcpu_usage: allcpu_usage,
     });
   }
 
@@ -151,17 +151,12 @@ class AgentDetail extends Component {
       }
     );
 
-    var realmem_usage = Object.entries(this.state.realcpumem_usage).map(
-      ([key, value]) => {
-        if (key !== "CPUPercent") {
-          return (
-            <div>
-              {key} : {value}
-            </div>
-          );
-        }
-      }
-    );
+    let total_mem = this.cpumem_usage["TotalMem"];
+    let free_mem = this.cpumem_usage["AvailableMem"];
+    let mem_usage = [
+      { "total": total_mem },
+      { "free" : free_mem }
+    ]
 
     //console.log(api.getToken());
     //dashboard-level
@@ -211,7 +206,7 @@ class AgentDetail extends Component {
                   <Col>
                     <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
                     <div id="mem_usagebar">
-                      <MemDonut/>
+                      <MemDonut memory={mem_usage}/>
                     </div>
                     
                   </Col>
