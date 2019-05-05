@@ -4,3 +4,6 @@
 .action .nc-icon{
 
 }
+.col.action .nc-icon{
+cursor: pointer;
+}

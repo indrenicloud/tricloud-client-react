@@ -157,7 +157,7 @@ class Agents extends Component {
                                 </div>
                                 <div className="col action">
                                   <i
-                                    className="nc-icon nc-simple-remove text-danger"
+                                    className="nc-icon nc-simple-remove text-danger deletelist"
                                     onClick={() => this.handleDelete(prop, key)}
                                   />
                                 </div>

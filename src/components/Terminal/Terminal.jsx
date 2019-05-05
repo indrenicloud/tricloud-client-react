@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { Terminal as xTerm } from "xterm";
-
+import './Terminal.css';
 class Terminal extends Component {
   constructor(props) {
     super(props);

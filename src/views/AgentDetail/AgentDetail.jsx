@@ -96,36 +96,36 @@ class AgentDetail extends Component {
 
   ProcessSystemStat(respHead, respBody) {
     this.cpumem_usage = respBody;
-    if (typeof this.cpumem_usage !== "object") {
-      this.setState({
-        realcpumem_usage: {}
-      });
-    } else {
-      this.setState({
-        realcpumem_usage: this.cpumem_usage
-      });
-    }
+    // if (typeof this.cpumem_usage !== "object") {
+    //   this.setState({
+    //     realcpumem_usage: {}
+    //   });
+    // } else {
+    //   this.setState({
+    //     realcpumem_usage: this.cpumem_usage
+    //   });
+    // }
 
-    let core1 = this.cpumem_usage["CPUPercent"][0];
-    /*
-    let realcpu_usage = Object.entries(this.state.realcpumem_usage).map(
+    let cores = this.cpumem_usage["CPUPercent"][0];
+    let avgcpu_usage
+    let realcpu_usage = Object.entries(this.cpumem_usage).map(
       ([key, value]) => {
         if (key === "CPUPercent") {
           let totalcpu_usage = value.reduce(
             (previous, current) => (current += previous)
           );
           avgcpu_usage = Math.round(totalcpu_usage / value.length);
-
           return value.map((v, i) => {
-            return <li>{Math.round(v)}%</li>;
+            console.log("vale",v)
+            return <li>{Math.round(v)}+%</li>
           });
         }
       }
-    ); */
+    ); 
 
     this.setState({
-      avgcpu_usage: core1,
-      realcpu_usage: core1
+      avgcpu_usage: avgcpu_usage,
+      realcpu_usage : realcpu_usage,
     });
   }
 
