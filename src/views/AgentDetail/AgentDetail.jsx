@@ -15,6 +15,7 @@ import Websocket from "react-websocket";
 import { number } from "prop-types";
 
 import UsageBar from "components/UsageBar/UsageBar";
+import Memusage from "components/Memusage/Memusage";
 import Terminal from "components/Terminal/Terminal";
 import Stats from "components/Stats/Stats.jsx";
 import withAuth from "components/Login/withAuth";
@@ -174,7 +175,7 @@ class AgentDetail extends Component {
     return (
       <div className="content">
         <Row>
-          <Col xs={12} sm={6} md={6} lg={5}>
+          <Col xs={12} sm={6} md={6} lg={4}>
             <Card>
               <CardBody>
                 <Row>
@@ -193,6 +194,41 @@ class AgentDetail extends Component {
                 <ol className={"cpu_usage"}>
                   {Math.round(this.state.realcpu_usage) + "%"}
                 </ol>
+              </CardFooter>
+            </Card>
+          </Col>
+
+          <Col xs={12} sm={6} md={6} lg={4}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h2 className={"card-title cpu_usage_title"}>MEM USAGE</h2>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Memusage />
+                  </Col>
+                </Row>
+              </CardBody>
+              <CardFooter>
+                <hr />
+                {realmem_usage}
+              </CardFooter>
+            </Card>
+          </Col>
+
+          <Col xs={12} sm={6} md={6} lg={4}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col />
+                </Row>
+              </CardBody>
+              <CardFooter>
+                <hr />
+                {realmem_usage}
               </CardFooter>
             </Card>
           </Col>

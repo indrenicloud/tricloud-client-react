@@ -6,17 +6,19 @@ class UsageBar extends Component {
   constructor(props) {
     super(props);
     this.divref = React.createRef();
+    this.componentheight = 0;
+    this.componentwidth = 0;
   }
 
   componentDidMount() {
-    let componentheight = document.getElementById("realcpu_usage").clientHeight;
-    let componentwidth = document.getElementById("realcpu_usage").clientWidth;
-    this.displayDCPU(componentheight, componentwidth, false);
+    this.componentheight = document.getElementById(
+      "realcpu_usage"
+    ).clientHeight;
+    this.componentwidth = document.getElementById("realcpu_usage").clientWidth;
+    this.displayDCPU(this.componentheight, this.componentwidth, false);
   }
   componentDidUpdate() {
-    let componentheight = document.getElementById("realcpu_usage").clientHeight;
-    let componentwidth = document.getElementById("realcpu_usage").clientWidth;
-    this.displayDCPU(componentheight, componentwidth);
+    this.displayDCPU(this.componentheight, this.componentwidth);
   }
 
   displayDCPU(height, width, _redraw = true) {
