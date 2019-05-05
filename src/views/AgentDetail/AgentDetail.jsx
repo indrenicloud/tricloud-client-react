@@ -130,11 +130,13 @@ class AgentDetail extends Component {
     });
     var systeminfo = Object.entries(this.state.systeminfo).map(
       ([key, value]) => {
+        if(value.length>0){
         return (
           <div>
             {key} : {value}
           </div>
         );
+        }
       }
     );
 
@@ -197,11 +199,16 @@ class AgentDetail extends Component {
             <Card>
               <CardBody>
                 <Row>
-                  <Col>{agentinfo}</Col>
+                  <Col>
+                  
+                  <h3 className={"card-title agent_info_title"}>Agent Info</h3>
+                  <div id="agentinfo">
+                  {agentinfo}
+                  </div>
+                  </Col>
                 </Row>
               </CardBody>
               <CardFooter>
-                <hr />
               </CardFooter>
             </Card>
           </Col>
@@ -209,11 +216,15 @@ class AgentDetail extends Component {
             <Card>
               <CardBody>
                 <Row>
-                  <Col>{systeminfo}</Col>
+                  <Col>
+                  <h3 className={"card-title system_info_title"}>System Details</h3>
+                  <div id="system_details">
+                  {systeminfo}
+                  </div>
+                  </Col>
                 </Row>
               </CardBody>
               <CardFooter>
-                <hr />
               </CardFooter>
             </Card>
           </Col>
