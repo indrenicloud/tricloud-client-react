@@ -11,7 +11,7 @@ export function parsePacket(arrbuf) {
   let offset = arrbuf.byteLength - 4;
   let headerbuf = arrbuf.slice(offset, arrbuf.byteLength);
   let headerdataview = new DataView(headerbuf, 0);
-  let connid = headerdataview.getUint8(0);
+  let connid = headerdataview.getUint16(0);
   let cmdtype = headerdataview.getUint8(2);
   let flow = headerdataview.getUint8(3);
 
@@ -43,7 +43,13 @@ export function parsePacket(arrbuf) {
 }
 
 export function encodeMsg(msgstr, connid, cmdtype, flowtype) {
-  let headUarr = new Uint8Array([connid, 0, cmdtype, flowtype]);
+  let connidarr = new Uint16Array([connid]);
+  let headUarr = new Uint8Array([
+    connidarr[1],
+    connidarr[0],
+    cmdtype,
+    flowtype
+  ]);
   let bodyUarray;
   if ("TextDecoder" in window) {
     let json = JSON.stringify(msgstr);
