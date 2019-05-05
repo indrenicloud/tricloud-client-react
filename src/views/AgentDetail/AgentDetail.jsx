@@ -21,6 +21,9 @@ import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
 import "./AgentDetail.css";
+import Moment from 'react-moment';
+import 'moment-timezone';
+
 import {
   parsePacket,
   encodeMsg,
@@ -122,6 +125,14 @@ class AgentDetail extends Component {
 
   render() {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
+      if(key==='firstadded' || key==='lastlogin'){
+
+        return (
+        <div>
+          {key} : <Moment tz="Asia/Kathmandu" format="YYYY-MMM-DD HH:mm:ss">{value}</Moment>, <Moment fromNow>{value}</Moment>
+        </div>
+        )
+      }
       return (
         <div>
           {key} : {value.toString()}
