@@ -124,7 +124,7 @@ class AgentDetail extends Component {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
       return (
         <div>
-          {key} : {value}
+          {key} : {value.toString()}
         </div>
       );
     });
@@ -133,7 +133,7 @@ class AgentDetail extends Component {
         if(value.length>0){
         return (
           <div>
-            {key} : {value}
+            {key} : {value.toString()}
           </div>
         );
         }
