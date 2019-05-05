@@ -117,11 +117,12 @@ class AgentDetail extends Component {
           avgcpu_usage = Math.round(totalcpu_usage / value.length);
           return value.map((v, i) => {
             console.log("vale",v)
-            return <li>{Math.round(v)}+%</li>
+            return <li>{Math.round(v)}%</li>
           });
         }
       }
     ); 
+    console.log(realcpu_usage);
 
     this.setState({
       avgcpu_usage: avgcpu_usage,
@@ -191,7 +192,7 @@ class AgentDetail extends Component {
               <CardFooter>
                 <hr />
                 <ol className={"cpu_usage"}>
-                  {Math.round(this.state.realcpu_usage) + "%"}
+                  {this.state.realcpu_usage}
                 </ol>
               </CardFooter>
             </Card>
