@@ -19,7 +19,7 @@ export default class MemDonut extends Component {
   componentDidUpdate() {
     let componentheight = document.getElementById("mem_usagebar").clientHeight;
     let componentwidth = document.getElementById("mem_usagebar").clientWidth;
-    console.log("UPDATE IN HERE");
+    
   
     this.displayMem(componentheight, componentwidth);
   }
@@ -30,9 +30,10 @@ export default class MemDonut extends Component {
 
   displayMem(cheight,cwidth, _redraw=true) {
     var data = this.getData()
+    console.log(data)
 
     var category = ['Free', 'Used'],
-        cateColor = [ "#ffee00" , "#0068b7", '#00b7ee', '#a5d4f3', '#eff9ff'];
+        cateColor = [ "#ffee00" , "#0068b7"];
 
     //generation function
     function generate(data, id) {
@@ -180,15 +181,15 @@ export default class MemDonut extends Component {
     //inits chart
     if (this.sca == null ) {
     this.sca = new generate(data, "#sensor-cpu-donut-d3");
+    return
     }
-    //dynamic data and chart update
-      //update donut data
-      for (var i=0; i<Object.keys(data).length; i++){
-        data[i].value = Math.floor(Math.random()*100);
+    console.log("UPDATE IN HERE");
+    let sca = this.sca;
+   // setInterval(function() {
    
-    redraw(data, this.sca.getPath(), this.sca.getArc());
-    
-  }}
+    redraw(data, this.sca.getPath(), this.sca.getArc());  
+ // }, 5000)
+}
 
   render() {
     return <div id={"sensor-cpu-donut-d3"} style={{ height: "280px" }} />;

@@ -43,6 +43,10 @@ class AgentDetail extends Component {
       realcpumem_usage: {},
       avgcpu_usage: 0,
       allcpu_usage: [],
+      memusage: [
+        { inits: 'Free', value: 20 },
+        { inits: 'Used', value: 40 }
+      ]
     };
     this.getAgentData = this.getAgentData.bind(this);
     this.webSocketResponse = this.webSocketResponse.bind(this);
@@ -106,10 +110,27 @@ class AgentDetail extends Component {
     );
     let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
     let allcpu_usage = cpu_cores;
+
+    let total_mem = this.cpumem_usage["TotalMem"];
+    let free_mem = this.cpumem_usage["AvailableMem"];
+
+    let mem_usage = [
+      { inits: 'Free', value: 1 },
+      { inits: 'Used', value: 99 }
+    ]
+    
+    if (total_mem && free_mem) {
+      mem_usage = [
+        { inits: 'Free', value: free_mem },
+        { inits: 'Used', value: total_mem - free_mem }
+      ]
+      
+    }
    
     this.setState({
       avgcpu_usage: avgcpu_usage,
       allcpu_usage: allcpu_usage,
+      memusage :mem_usage
     });
   }
 
@@ -151,19 +172,19 @@ class AgentDetail extends Component {
       }
     );
 
-    let total_mem = this.cpumem_usage["TotalMem"];
-    let free_mem = this.cpumem_usage["AvailableMem"];
-    let mem_usage = [
-      { inits: 'Free', value: 0 },
-      { inits: 'Used', value: 0 }
-    ]
-    if (total_mem && free_mem) {
-      mem_usage = [
-        { inits: 'Free', value: free_mem },
-        { inits: 'Used', value: total_mem - free_mem }
-      ]
+    // let total_mem = this.cpumem_usage["TotalMem"];
+    // let free_mem = this.cpumem_usage["AvailableMem"];
+    // let mem_usage = [
+    //   { inits: 'Free', value: 0 },
+    //   { inits: 'Used', value: 0 }
+    // ]
+    // if (total_mem && free_mem) {
+    //   mem_usage = [
+    //     { inits: 'Free', value: free_mem },
+    //     { inits: 'Used', value: total_mem - free_mem }
+    //   ]
       
-    }
+    // }
 
 
     //console.log(api.getToken());
@@ -214,7 +235,7 @@ class AgentDetail extends Component {
                   <Col>
                     <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
                     <div id="mem_usagebar">
-                      <MemDonut memory={mem_usage}/>
+                      <MemDonut memory={this.state.memusage}/>
                     </div>
                     
                   </Col>
