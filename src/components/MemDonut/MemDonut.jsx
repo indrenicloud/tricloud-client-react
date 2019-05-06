@@ -47,7 +47,7 @@ export default class MemDonut extends Component {
           outerRadius = radius * 0.75;
 
       var legendRectSize = radius/8,
-          legendSpacing = radius/5;
+          legendSpacing = (radius/1.2)+20;
 
       var color = scale
           .scaleOrdinal()
@@ -130,7 +130,7 @@ export default class MemDonut extends Component {
           })
           .attr('class', 'legend')
           .attr('transform', function(d, i) {
-            var horz = (i-2.8)*(legendSpacing+legendRectSize);
+            var horz = (i-1)*(legendSpacing+legendRectSize);
             var vert =  radius + margin.bottom / 4;
             return 'translate(' + horz + ',' + vert + ')';
           });
@@ -143,11 +143,11 @@ export default class MemDonut extends Component {
 
       legend.append('text')
           .data(data)
-          .attr('x', legendRectSize*1.2)
+          .attr('x', legendRectSize)
           .attr('y', legendRectSize/1.3)
           .text(function(d) {
             //console.log(d);
-            return d.inits; });
+            return d.inits+" "+Math.round(d.value/(1024*1024))+" MB"; });
 
       this.getPath = function() {
         return path;
@@ -202,6 +202,6 @@ export default class MemDonut extends Component {
 
   render() {
     // using className from the props as ID for a bit of dynamic thing ;p
-    return <div id={this.props.className} style={{ height: "280px" }} />;
+    return <div id={this.props.className} style={{ height: "248px" }} />;
   }
 }

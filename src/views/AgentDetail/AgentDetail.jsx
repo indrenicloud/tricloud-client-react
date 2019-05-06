@@ -244,8 +244,8 @@ class AgentDetail extends Component {
                   
                 </div> */}
               </CardBody>
-              <CardFooter>
-              </CardFooter>
+              {/* <CardFooter>
+              </CardFooter> */}
             </Card>
           </Col>
         </Row>
