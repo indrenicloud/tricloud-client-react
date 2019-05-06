@@ -44,8 +44,8 @@ class AgentDetail extends Component {
       avgcpu_usage: 0,
       allcpu_usage: [],
       memusage: [
-        { inits: 'Free', value: 20 },
-        { inits: 'Used', value: 40 }
+        { inits: 'Free', value: 50 },
+        { inits: 'Used', value: 50 }
       ]
     };
     this.getAgentData = this.getAgentData.bind(this);

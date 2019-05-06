@@ -14,23 +14,24 @@ export default class MemDonut extends Component {
     let componentheight = document.getElementById("mem_usagebar").clientHeight;
     let componentwidth = document.getElementById("mem_usagebar").clientWidth;    
     this.displayMem(componentheight, componentwidth, false);
-    this.displayMem(componentheight, componentwidth, false);
   }
   componentDidUpdate() {
     let componentheight = document.getElementById("mem_usagebar").clientHeight;
     let componentwidth = document.getElementById("mem_usagebar").clientWidth;
-    
-  
-    this.displayMem(componentheight, componentwidth);
+    var e = document.getElementById('sensor-cpu-donut-d3')
+    if(e.firstChild){
+      e.removeChild(e.firstChild);
+      this.displayMem(componentheight, componentwidth);
+    }
   }
 
   getData() {
     return  this.props.memory
   }
 
-  displayMem(cheight,cwidth, _redraw=true) {
+  displayMem(cheight,cwidth,_redraw) {
     var data = this.getData()
-    console.log(data)
+    console.log("data yaha cha",data)
 
     var category = ['Free', 'Used'],
         cateColor = [ "#ffee00" , "#0068b7"];
@@ -88,7 +89,7 @@ export default class MemDonut extends Component {
             this._current=d;
           })
           .on('mouseover', function(d) {
-            console.log(d);
+            // console.log(d);
 
             d3.select(this).transition().duration(200).attr("d", arc.innerRadius(innerRadius).outerRadius(outerRadius / 0.75 * 0.9));
 
@@ -179,15 +180,23 @@ export default class MemDonut extends Component {
     }
 
     //inits chart
-    if (this.sca == null ) {
+    // if (this.sca == null ) {
+    if(_redraw!=true){
     this.sca = new generate(data, "#sensor-cpu-donut-d3");
     return
     }
-    console.log("UPDATE IN HERE");
-    let sca = this.sca;
+    else{
+    // return
+    // }
+    // console.log("UPDATE IN HERE");
+    // let sca = this.sca;
    // setInterval(function() {
+  //  if(this.sca !=null){
    
     redraw(data, this.sca.getPath(), this.sca.getArc());  
+    return
+    }
+  //  }
  // }, 5000)
 }
 
