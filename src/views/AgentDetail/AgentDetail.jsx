@@ -154,9 +154,17 @@ class AgentDetail extends Component {
     let total_mem = this.cpumem_usage["TotalMem"];
     let free_mem = this.cpumem_usage["AvailableMem"];
     let mem_usage = [
-      { "total": total_mem },
-      { "free" : free_mem }
+      { inits: 'Free', value: 0 },
+      { inits: 'Used', value: 0 }
     ]
+    if (total_mem && free_mem) {
+      mem_usage = [
+        { inits: 'Free', value: free_mem },
+        { inits: 'Used', value: total_mem - free_mem }
+      ]
+      
+    }
+
 
     //console.log(api.getToken());
     //dashboard-level
