@@ -235,7 +235,7 @@ class AgentDetail extends Component {
                   <Col>
                     <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
                     <div id="mem_usagebar">
-                      <MemDonut memory={this.state.memusage}/>
+                      <MemDonut className="memory-donut" memory={this.state.memusage}/>
                     </div>
                     
                   </Col>

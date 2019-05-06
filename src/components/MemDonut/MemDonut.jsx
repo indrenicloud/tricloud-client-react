@@ -18,7 +18,7 @@ export default class MemDonut extends Component {
   componentDidUpdate() {
     let componentheight = document.getElementById("mem_usagebar").clientHeight;
     let componentwidth = document.getElementById("mem_usagebar").clientWidth;
-    var e = document.getElementById('sensor-cpu-donut-d3')
+    var e = document.getElementById(this.props.className)
     if(e.firstChild){
       e.removeChild(e.firstChild);
       this.displayMem(componentheight, componentwidth);
@@ -182,7 +182,7 @@ export default class MemDonut extends Component {
     //inits chart
     // if (this.sca == null ) {
     if(_redraw!=true){
-    this.sca = new generate(data, "#sensor-cpu-donut-d3");
+    this.sca = new generate(data, '#'+this.props.className);
     return
     }
     else{
@@ -201,6 +201,7 @@ export default class MemDonut extends Component {
 }
 
   render() {
-    return <div id={"sensor-cpu-donut-d3"} style={{ height: "280px" }} />;
+    // using className from the props as ID for a bit of dynamic thing ;p
+    return <div id={this.props.className} style={{ height: "280px" }} />;
   }
 }
