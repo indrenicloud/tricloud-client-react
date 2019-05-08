@@ -16,3 +16,20 @@
 #allcpu_usage{
   float: right;
 }
+.netspeed_stats.center {
+
+  background: #2d9eff !important;
+  position: relative;
+  color: white;
+  font-size: 1.75rem;
+  font-family: inherit;
+  text-align: center;
+}
+.netusage_stats.center{
+  background: #2d9eff !important;
+  position: relative;
+  color: white;
+  font-size: 1.75rem;
+  font-family: inherit;
+  text-align: center;
+}

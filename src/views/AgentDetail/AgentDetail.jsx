@@ -21,9 +21,9 @@ import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
 import "./AgentDetail.css";
-import Moment from 'react-moment';
-import 'moment-timezone';
-import MemDonut from 'components/MemDonut/MemDonut';
+import Moment from "react-moment";
+import "moment-timezone";
+import MemDonut from "components/MemDonut/MemDonut";
 import {
   parsePacket,
   encodeMsg,
@@ -45,10 +45,10 @@ class AgentDetail extends Component {
       realcpumem_usage: {},
       avgcpu_usage: 0,
       allcpu_usage: [],
-      memusage: [
-        { inits: 'Free', value: 50 },
-        { inits: 'Used', value: 50 }
-      ]
+      memusage: [{ inits: "Free", value: 50 }, { inits: "Used", value: 50 }],
+      netusage: {},
+      stat_timestamp: 0,
+      netspeed: {}
     };
     this.getAgentData = this.getAgentData.bind(this);
     this.webSocketResponse = this.webSocketResponse.bind(this);
@@ -59,7 +59,7 @@ class AgentDetail extends Component {
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
     this.taskmanagerRef = React.createRef();
-    this.cpumem_usage = {};
+    this.sys_usage = {};
     this.head = {};
   }
 
@@ -94,9 +94,9 @@ class AgentDetail extends Component {
           this.ProcessTerminal(head, body);
           break;
         case CMD_TASKMGR:
-          let _func = this.taskmanagerRef.current.updateTerminal
-          if (_func != null){
-            _func(body)
+          let _func = this.taskmanagerRef.current.updateTerminal;
+          if (_func != null) {
+            _func(body);
           }
           break;
         default:
@@ -112,34 +112,55 @@ class AgentDetail extends Component {
   }
 
   ProcessSystemStat(respHead, respBody) {
-    this.cpumem_usage = respBody;
-    let cpu_cores = this.cpumem_usage["CPUPercent"];
+    this.sys_usage = respBody;
+    let stat_timestamp = this.sys_usage["TimeStamp"];
+    let cpu_cores = this.sys_usage["CPUPercent"];
     let totalcpu_usage = cpu_cores.reduce(
       (previous, current) => (current += previous)
     );
     let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
     let allcpu_usage = cpu_cores;
 
-    let total_mem = this.cpumem_usage["TotalMem"];
-    let free_mem = this.cpumem_usage["AvailableMem"];
+    let total_mem = this.sys_usage["TotalMem"];
+    let free_mem = this.sys_usage["AvailableMem"];
 
-    let mem_usage = [
-      { inits: 'Free', value: 1 },
-      { inits: 'Used', value: 99 }
-    ]
-    
+    let mem_usage = [{ inits: "Free", value: 1 }, { inits: "Used", value: 99 }];
+
     if (total_mem && free_mem) {
       mem_usage = [
-        { inits: 'Free', value: free_mem },
-        { inits: 'Used', value: total_mem - free_mem }
-      ]
-      
+        { inits: "Free", value: free_mem },
+        { inits: "Used", value: total_mem - free_mem }
+      ];
     }
-   
+
+    let new_sentbytes = this.sys_usage["NetSentbytes"];
+    let new_recvbytes = this.sys_usage["NetRecvbytes"];
+
+    let sentbytes_diff = new_sentbytes - this.state.netusage["sentbytes"];
+    let recvbytes_diff = new_recvbytes - this.state.netusage["recvbytes"];
+
+    let new_datetime = new Date(stat_timestamp / 1000000);
+    let old_datetime = new Date(this.state.stat_timestamp / 1000000);
+    let stat_timestamp_diff = new_datetime - old_datetime;
+
+    console.log(sentbytes_diff, "---", stat_timestamp_diff);
+    let time_diff = stat_timestamp_diff / 1000;
+    let netusage = {
+      sentbytes: new_sentbytes,
+      recvbytes: new_recvbytes
+    };
+
+    let netspeed = {
+      up: sentbytes_diff / time_diff,
+      down: recvbytes_diff / time_diff
+    };
     this.setState({
       avgcpu_usage: avgcpu_usage,
       allcpu_usage: allcpu_usage,
-      memusage :mem_usage
+      memusage: mem_usage,
+      netusage: netusage,
+      netspeed: netspeed,
+      stat_timestamp: stat_timestamp
     });
   }
 
@@ -155,13 +176,16 @@ class AgentDetail extends Component {
 
   render() {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
-      if(key==='firstadded' || key==='lastlogin'){
-
+      if (key === "firstadded" || key === "lastlogin") {
         return (
-        <div>
-          {key} : <Moment tz="Asia/Kathmandu" format="YYYY-MMM-DD HH:mm:ss">{value}</Moment>, <Moment fromNow>{value}</Moment>
-        </div>
-        )
+          <div>
+            {key} :{" "}
+            <Moment tz="Asia/Kathmandu" format="YYYY-MMM-DD HH:mm:ss">
+              {value}
+            </Moment>
+            , <Moment fromNow>{value}</Moment>
+          </div>
+        );
       }
       return (
         <div>
@@ -171,18 +195,25 @@ class AgentDetail extends Component {
     });
     var systeminfo = Object.entries(this.state.systeminfo).map(
       ([key, value]) => {
-        if(value.length>0){
-        return (
-          <div>
-            {key} : {value.toString()}
-          </div>
-        );
+        if (value.length > 0) {
+          return (
+            <div>
+              {key} : {value.toString()}
+            </div>
+          );
         }
       }
     );
-
-    // let total_mem = this.cpumem_usage["TotalMem"];
-    // let free_mem = this.cpumem_usage["AvailableMem"];
+    function formatBytes(a, b) {
+      if (0 === a) return "0 Bytes";
+      var c = 1024,
+        d = b || 2,
+        e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+        f = Math.floor(Math.log(a) / Math.log(c));
+      return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
+    }
+    // let total_mem = this.sys_usage["TotalMem"];
+    // let free_mem = this.sys_usage["AvailableMem"];
     // let mem_usage = [
     //   { inits: 'Free', value: 0 },
     //   { inits: 'Used', value: 0 }
@@ -192,16 +223,15 @@ class AgentDetail extends Component {
     //     { inits: 'Free', value: free_mem },
     //     { inits: 'Used', value: total_mem - free_mem }
     //   ]
-      
-    // }
 
+    // }
 
     //console.log(api.getToken());
     //dashboard-level
     return (
       <div className="content">
         <Row>
-          <Col xs={12} sm={6} md={6} lg={5}>
+          <Col xs={12} sm={6} md={6} lg={6}>
             <Card>
               <CardBody>
                 <Row>
@@ -210,7 +240,6 @@ class AgentDetail extends Component {
                     <div id="cpu_usagebar">
                       <UsageBar data={this.state.avgcpu_usage} />
                     </div>
-                    
                   </Col>
                 </Row>
                 <div className="stats">
@@ -237,16 +266,78 @@ class AgentDetail extends Component {
               </CardFooter>
             </Card>
           </Col>
-          <Col xs={12} sm={6} md={6} lg={5}>
+          <Col xs={12} sm={6} md={6} lg={6}>
             <Card>
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
+                    <h3 className={"card-title mem_usage_title"}>
+                      Memory Usage
+                    </h3>
                     <div id="mem_usagebar">
-                      <MemDonut className="memory-donut" memory={this.state.memusage}/>
+                      <MemDonut
+                        className="memory-donut"
+                        memory={this.state.memusage}
+                      />
                     </div>
-                    
+                  </Col>
+                </Row>
+                {/* <div className="stats">
+                  
+                </div> */}
+              </CardBody>
+              {/* <CardFooter>
+              </CardFooter> */}
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <Card>
+              <CardBody>
+                <h3 className={"card-title net_usage_title"}>Network Usage</h3>
+                <Row>
+                  <Col>
+                    <div className="netspeed_stats center">
+                      <i className="nc-icon nc-minimal-up" />
+                      {(this.state.netspeed["up"] / 1000).toFixed(2)}
+                      KB/s
+                    </div>
+                  </Col>
+                  <Col>
+                    <div className="netspeed_stats center">
+                      <i className="nc-icon nc-minimal-down" />{" "}
+                      {(this.state.netspeed["down"] / 1000).toFixed(2)}KB/s
+                    </div>
+                  </Col>
+                </Row>
+                
+              </CardBody>
+              <CardFooter>
+              <Row>
+                  <Col>
+                    <div className="netusage_stats center">
+                      {formatBytes(this.state.netusage["sentbytes"])}
+                    </div>
+                  </Col>
+                  <Col>
+                    <div className="netusage_stats center">
+                      {formatBytes(this.state.netusage["recvbytes"])}{" "}
+                    </div>
+                  </Col>
+                </Row>
+              </CardFooter>
+            </Card>
+          </Col>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h3 className={"card-title disk_usage_title"}>
+                      Disk Usage
+                    </h3>
+                    <div id="" />
                   </Col>
                 </Row>
                 {/* <div className="stats">
@@ -264,16 +355,14 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                  
-                  <h3 className={"card-title agent_info_title"}>Agent Info</h3>
-                  <div id="agentinfo">
-                  {agentinfo}
-                  </div>
+                    <h3 className={"card-title agent_info_title"}>
+                      Agent Info
+                    </h3>
+                    <div id="agentinfo">{agentinfo}</div>
                   </Col>
                 </Row>
               </CardBody>
-              <CardFooter>
-              </CardFooter>
+              <CardFooter />
             </Card>
           </Col>
           <Col xs={12} sm={6} md={6} lg={6}>
@@ -281,15 +370,14 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                  <h3 className={"card-title system_info_title"}>System Details</h3>
-                  <div id="system_details">
-                  {systeminfo}
-                  </div>
+                    <h3 className={"card-title system_info_title"}>
+                      System Details
+                    </h3>
+                    <div id="system_details">{systeminfo}</div>
                   </Col>
                 </Row>
               </CardBody>
-              <CardFooter>
-              </CardFooter>
+              <CardFooter />
             </Card>
           </Col>
         </Row>
@@ -322,20 +410,23 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                  <TaskManager ref={this.taskmanagerRef}>
-
-                  </TaskManager>
+                    <TaskManager ref={this.taskmanagerRef} />
                   </Col>
                 </Row>
               </CardBody>
               <CardFooter>
-                <button onClick={(event)=> {
-                  console.log(event)
-                  let out = encodeMsg({ Interval:5, Timeout:200 }, this.head.connid, CMD_TASKMGR, 1);
-                  this.websocketRef.current.sendMessage(out);
-                }}>
-
-                </button>
+                <button
+                  onClick={event => {
+                    console.log(event);
+                    let out = encodeMsg(
+                      { Interval: 5, Timeout: 200 },
+                      this.head.connid,
+                      CMD_TASKMGR,
+                      1
+                    );
+                    this.websocketRef.current.sendMessage(out);
+                  }}
+                />
               </CardFooter>
             </Card>
           </Col>
