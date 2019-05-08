@@ -28,8 +28,10 @@ import {
   parsePacket,
   encodeMsg,
   CMD_SYSTEM_STAT,
-  CMD_TERMINAL
+  CMD_TERMINAL,
+  CMD_TASKMGR
 } from "../../service/utility";
+import TaskManager from "../../components/TaskManager/TaskManager";
 
 const api = new Api();
 
@@ -56,6 +58,7 @@ class AgentDetail extends Component {
     this.startTerminal = this.startTerminal.bind(this);
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
+    this.taskmanagerRef = React.createRef();
     this.cpumem_usage = {};
     this.head = {};
   }
@@ -89,6 +92,12 @@ class AgentDetail extends Component {
           break;
         case CMD_TERMINAL:
           this.ProcessTerminal(head, body);
+          break;
+        case CMD_TASKMGR:
+          let _func = this.taskmanagerRef.current.updateTerminal
+          if (_func != null){
+            _func(body)
+          }
           break;
         default:
           console.log("Not implemented");
@@ -303,6 +312,31 @@ class AgentDetail extends Component {
                 </Row>
               </CardBody>
               <CardFooter />
+            </Card>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={12} sm={12} md={12} lg={12}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                  <TaskManager ref={this.taskmanagerRef}>
+
+                  </TaskManager>
+                  </Col>
+                </Row>
+              </CardBody>
+              <CardFooter>
+                <button onClick={(event)=> {
+                  console.log(event)
+                  let out = encodeMsg({ Interval:5, Timeout:200 }, this.head.connid, CMD_TASKMGR, 1);
+                  this.websocketRef.current.sendMessage(out);
+                }}>
+
+                </button>
+              </CardFooter>
             </Card>
           </Col>
         </Row>
