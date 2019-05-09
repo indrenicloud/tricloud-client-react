@@ -20,6 +20,12 @@ export default class TaskManager extends Component {
     this.dataloaded = false;
   }
 
+  getFilteredProcesses = () =>
+    this.state.termdata.filter(element => {
+      if (element["UpTime"] == 0 || element["MEM"] == 0) return false;
+      else return true;
+    });
+
   updateTerminal = data => {
     console.log(data);
     this.dataloaded = true;
@@ -46,7 +52,7 @@ export default class TaskManager extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.termdata.map((item, key) => {
+            {this.getFilteredProcesses().map((item, key) => {
               return (
                 <tr key={key}>
                   {titles.map((title, key) => {
