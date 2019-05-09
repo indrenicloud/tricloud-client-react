@@ -208,7 +208,7 @@ class AgentDetail extends Component {
       if (0 === a) return "0 Bytes";
       var c = 1024,
         d = b || 2,
-        e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+        e = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
         f = Math.floor(Math.log(a) / Math.log(c));
       return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
     }
@@ -300,14 +300,13 @@ class AgentDetail extends Component {
                   <Col>
                     <div className="netspeed_stats center">
                       <i className="nc-icon nc-minimal-up" />
-                      {(this.state.netspeed["up"] / 1000).toFixed(2)}
-                      KB/s
+                      {formatBytes(this.state.netspeed["up"])}/s
                     </div>
                   </Col>
                   <Col>
                     <div className="netspeed_stats center">
                       <i className="nc-icon nc-minimal-down" />{" "}
-                      {(this.state.netspeed["down"] / 1000).toFixed(2)}KB/s
+                      {formatBytes(this.state.netspeed["down"])}/s
                     </div>
                   </Col>
                 </Row>
