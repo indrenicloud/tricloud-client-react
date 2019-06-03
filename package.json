@@ -2,7 +2,7 @@
   "name": "tricloud-client-react",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://github.com/indrenicloud/tricloud-client-react/",
+  "homepage": "./",
   "dependencies": {
     "@types/react": "16.4.16",
     "bootstrap": ">=4.3.1",
