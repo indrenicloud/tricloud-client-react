@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col
-} from "reactstrap";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col } from "reactstrap";
 import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
@@ -42,14 +34,7 @@ class Agents extends Component {
       if (result.data.length > 0) {
         result.data.map(function(key) {
           const info = {
-            data: [
-              key.id,
-              key.systeminfo.os,
-              key.systeminfo.hostname,
-              key.owner,
-              key.systeminfo.platform + " " + key.systeminfo.platformVersion,
-              key.active ? "Active" : "Inactive"
-            ]
+            data: [key.id, key.systeminfo.os, key.systeminfo.hostname, key.owner, key.systeminfo.platform + " " + key.systeminfo.platformVersion, key.active ? "Active" : "Inactive"]
           };
           agentsinfos.push(info);
         });
@@ -114,69 +99,67 @@ class Agents extends Component {
         </div>
       );
     }
-      return (
-        <div className="content">
-          <NotificationAlert ref="notificationAlert" />
-          <Row>
-            <Col xs={12}>
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h4">List of Agents</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <Table responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        {thead.map((prop, key) => {
-                          if (key === thead.length - 1)
-                            return (
-                              <th key={key} className="text-right">
-                                {prop}
-                              </th>
-                            );
-                          return <th key={key}>{prop}</th>;
-                        })}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.agentsinfo.map((prop, key) => {
-                        return (
-                          <tr key={key}>
-                            {prop.data.map((prop, key) => {
-                              return <td key={key}>{prop}</td>;
-                            })}
-                            <td>
-                              <div className="row">
-                                <div className="col action">
-                                  <Link to={`/agents/` + prop.data[0]}>
-                                    <i className="nc-icon nc-button-play text-success" />
-                                  </Link>
-                                </div>
-                                <div className="col action">
-                                  <i className="nc-icon nc-sound-wave text-warning" />
-                                </div>
-                                <div className="col action">
-                                  <i
-                                    className="nc-icon nc-simple-remove text-danger deletelist"
-                                    onClick={() => this.handleDelete(prop, key)}
-                                  />
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        );
+    return (
+      <div className="content">
+        <NotificationAlert ref="notificationAlert" />
+        <Row>
+          <Col xs={12}>
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">List of Agents</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      {thead.map((prop, key) => {
+                        if (key === thead.length - 1)
+                          return (
+                            <th key={key} className="text-right">
+                              {prop}
+                            </th>
+                          );
+                        return <th key={key}>{prop}</th>;
                       })}
-                    </tbody>
-                  </Table>
-                  {emptyinfo}
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      );
-    }
-  
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.agentsinfo.map((prop, key) => {
+                      return (
+                        <tr key={key}>
+                          {prop.data.map((prop, key) => {
+                            return <td key={key}>{prop}</td>;
+                          })}
+                          <td>
+                            <div className="row">
+                              <div className="col action">
+                                <Link to={`/agents/` + prop.data[0]}>
+                                  <i className="nc-icon nc-button-play text-success" />
+                                </Link>
+                              </div>
+                              <div className="col action">
+                                <Link to={`/agents/` + prop.data[0] + `/stats/`}>
+                                  <i className="nc-icon nc-sound-wave text-warning" />
+                                </Link>
+                              </div>
+                              <div className="col action">
+                                <i className="nc-icon nc-simple-remove text-danger deletelist" onClick={() => this.handleDelete(prop, key)} />
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+                {emptyinfo}
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
 }
 
 export default withAuth(Agents);
