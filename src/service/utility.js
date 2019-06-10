@@ -5,6 +5,10 @@ export const CMD_TASKMGR = 3;
 export const CMD_PROCESS_ACTION = 4;
 export const CMD_LIST_SERVICES = 5;
 export const CMD_SERVICE_ACTION = 6;
+export const CMD_EXIT = 7;
+export const CMD_GCM_TOKEN = 8;
+export const CMD_AGENTSBROADCAST = 9;
+export const CMD_BUILTIN_MAX = 10;
 
 export function parsePacket(arrbuf) {
   //let ubuff = new Uint8Array(data);
