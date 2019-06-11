@@ -10,7 +10,7 @@ import { thead } from "variables/agents";
 import Api from "service/Api";
 import Moment from "react-moment";
 import "moment-timezone";
-import { Line, Pie } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import { dashboardNASDAQChart } from "variables/charts.jsx";
 import { formatBytes } from "../../service/utility";
 const api = new Api();
@@ -22,7 +22,8 @@ class AgentStats extends Component {
     this.state = {
       all_stats: {},
       mem_data: {},
-      net_data: {}
+      net_data: {},
+      disk_data: {}
     };
   }
 
@@ -42,12 +43,15 @@ class AgentStats extends Component {
       var time_stamp = [];
       var net_downs = [];
       var net_ups = [];
+      var disk_used = [];
+
       Object.entries(result.data).map(([key, value]) => {
         console.log(value);
         mem_stats.push(formatBytes(value.TotalMem - value.AvailableMem));
         time_stamp.push(new Date(value.TimeStamp / 1000000));
         net_ups.push(formatBytes(value.NetSentbytes));
         net_downs.push(formatBytes(value.NetRecvbytes));
+        disk_used.push(formatBytes(value.DiskTotal - value.DiskFree));
       });
 
       this.setState({
@@ -59,6 +63,10 @@ class AgentStats extends Component {
         net_data: {
           net_ups: net_ups,
           net_downs: net_downs,
+          time_stamp: time_stamp
+        },
+        disk_data: {
+          disk_used: disk_used,
           time_stamp: time_stamp
         }
       });
@@ -166,6 +174,51 @@ class AgentStats extends Component {
         }
       }
     };
+
+    var DiskChart = {
+      data: {
+        labels: this.state.disk_data.time_stamp,
+        datasets: [
+          {
+            label: "Disk Used",
+            data: this.state.disk_data.disk_used,
+            fill: false,
+            borderColor: "#fbc658",
+            backgroundColor: "transparent",
+            pointBorderColor: "#fbc658",
+            pointRadius: 4,
+            pointHoverRadius: 4,
+            pointBorderWidth: 8
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [
+            {
+              type: "time",
+              distribution: "series",
+              ticks: {
+                source: "data",
+                autoSkip: true
+              }
+            }
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "GB"
+              }
+            }
+          ]
+        },
+        legend: {
+          display: true,
+          position: "bottom"
+        }
+      }
+    };
     return (
       <div className="content">
         <Row>
@@ -196,6 +249,22 @@ class AgentStats extends Component {
               </CardBody>
               <CardFooter>
                 <Line data={NetChart.data} options={NetChart.options} />
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={9}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h3 className={"card-title text-center"}>Disk Graph</h3>
+                  </Col>
+                </Row>
+              </CardBody> 
+              <CardFooter>
+                <Line data={DiskChart.data} options={DiskChart.options} />
               </CardFooter>
             </Card>
           </Col>
