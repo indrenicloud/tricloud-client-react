@@ -34,7 +34,7 @@ export default class TaskManager extends Component {
   render() {
     return (
       this.dataloaded && (
-        <Table responsive>
+        <Table responsive className="taskmanager">
           <thead className="text-primary">
             <tr>
               {titles.map((title, key) => {
@@ -56,7 +56,7 @@ export default class TaskManager extends Component {
                     if (key === titles.length - 1)
                       return (
                         <Fragment>
-                          <th key={key} className="text-right">
+                          <th key={key} className="text-right cmd">
                             {item[title]}
                           </th>
                           <th>
@@ -66,6 +66,9 @@ export default class TaskManager extends Component {
                       );
 
                     if (key === 2) {
+                      item[title] = Number(item[title]).toFixed(4);
+                    }
+                    if (key === 4) {
                       item[title] = Number(item[title]).toFixed(4);
                     }
                     return <th key={key}>{item[title]}</th>;
