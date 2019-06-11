@@ -15,7 +15,7 @@ import "./AgentDetail.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import MemDonut from "components/MemDonut/MemDonut";
-import { parsePacket, encodeMsg,CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_TASKMGR, formatBytes } from "../../service/utility";
+import { parsePacket, encodeMsg, CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_TASKMGR, formatBytes } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
 
 const api = new Api();
@@ -72,7 +72,7 @@ class AgentDetail extends Component {
     myReader.readAsArrayBuffer(event);
     myReader.addEventListener("loadend", e => {
       let [head, body] = parsePacket(e.srcElement.result);
-      
+
       console.log(head, body);
 
       if(head.cmdtype == CMD_PROCESS_ACTION) {
@@ -181,7 +181,8 @@ class AgentDetail extends Component {
     let out = encodeMsg({ PID: pid, Action: action }, this.connid, CMD_PROCESS_ACTION, 1);
     this.websocketRef.current.sendMessage(out);
   }
-
+  rebootAgent() {}
+  shutdownAgent() {}
   render() {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
       if (key === "firstadded" || key === "lastlogin") {
@@ -230,6 +231,38 @@ class AgentDetail extends Component {
     return (
       <div className="content">
         <Row>
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h3 className={"card-title agent_info_title"}>Agent Info</h3>
+                    <div id="agentinfo">{agentinfo}</div>
+                    <div>
+                      <button onClick={this.rebootAgent()}>Reboot</button>
+                      <button onClick={this.shutdownAgent()}>Shutdown</button>
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+              <CardFooter />
+            </Card>
+          </Col>
+
+          <Col xs={12} sm={6} md={6} lg={6}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h3 className={"card-title system_info_title"}>System Details</h3>
+                    <div id="system_details">{systeminfo}</div>
+                  </Col>
+                </Row>
+              </CardBody>
+              <CardFooter />
+            </Card>
+          </Col>
+
           <Col xs={12} sm={6} md={6} lg={4}>
             <Card>
               <CardBody>
@@ -309,33 +342,6 @@ class AgentDetail extends Component {
               </CardFooter>
             </Card>
           </Col>
-
-          <Col xs={12} sm={6} md={6} lg={6}>
-            <Card>
-              <CardBody>
-                <Row>
-                  <Col>
-                    <h3 className={"card-title agent_info_title"}>Agent Info</h3>
-                    <div id="agentinfo">{agentinfo}</div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter />
-            </Card>
-          </Col>
-          <Col xs={12} sm={6} md={6} lg={6}>
-            <Card>
-              <CardBody>
-                <Row>
-                  <Col>
-                    <h3 className={"card-title system_info_title"}>System Details</h3>
-                    <div id="system_details">{systeminfo}</div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter />
-            </Card>
-          </Col>
         </Row>
         {/* <input
           type="button"
@@ -365,7 +371,7 @@ class AgentDetail extends Component {
                 <Row>
                   <Col>
                     <h3 className={"card-title "}>Task Manager</h3>
-                    <TaskManager ref={this.taskmanagerRef} sendtoTaskmgr={this.processAction}/>
+                    <TaskManager ref={this.taskmanagerRef} sendtoTaskmgr={this.processAction} />
                   </Col>
                 </Row>
               </CardBody>
