@@ -1,14 +1,6 @@
-import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col
-} from "reactstrap";
-
+import React, { Component, Fragment } from "react";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col } from "reactstrap";
+import "./TaskManager.css";
 let titles = ["PID", "USER", "CPU", "MEM", "UpTime", "Command"];
 
 export default class TaskManager extends Component {
@@ -34,6 +26,10 @@ export default class TaskManager extends Component {
     });
   };
 
+  killProcess(key) {
+    console.log(key);
+  }
+
   render() {
     return (
       this.dataloaded && (
@@ -58,10 +54,19 @@ export default class TaskManager extends Component {
                   {titles.map((title, key) => {
                     if (key === titles.length - 1)
                       return (
-                        <th key={key} className="text-right">
-                          {item[title]}
-                        </th>
+                        <Fragment>
+                          <th key={key} className="text-right">
+                            {item[title]}
+                          </th>
+                          <th>
+                            <button onClick={() => this.killProcess(item["PID"])}>Kill</button>
+                          </th>
+                        </Fragment>
                       );
+
+                    if (key === 2) {
+                      item[title] = Number(item[title]).toFixed(4);
+                    }
                     return <th key={key}>{item[title]}</th>;
                   })}
                 </tr>
