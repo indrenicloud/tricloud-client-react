@@ -10,6 +10,7 @@ export default class TaskManager extends Component {
       termdata: {}
     });
     this.dataloaded = false;
+    this.killProcess = this.killProcess.bind(this);
   }
 
   getFilteredProcesses = () =>
@@ -27,7 +28,7 @@ export default class TaskManager extends Component {
   };
 
   killProcess(key) {
-    console.log(key);
+    this.props.sendtoTaskmgr(key, "kill");
   }
 
   render() {

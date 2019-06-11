@@ -15,7 +15,7 @@ import "./AgentDetail.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import MemDonut from "components/MemDonut/MemDonut";
-import { parsePacket, encodeMsg, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_TASKMGR, formatBytes } from "../../service/utility";
+import { parsePacket, encodeMsg,CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_TASKMGR, formatBytes } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
 
 const api = new Api();
@@ -43,6 +43,7 @@ class AgentDetail extends Component {
     this.ProcessSystemStat = this.ProcessSystemStat.bind(this);
     this.startTerminal = this.startTerminal.bind(this);
     this.ProcessAgentsBroadcast = this.ProcessAgentsBroadcast.bind(this);
+    this.processAction = this.processAction.bind(this);
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
     this.taskmanagerRef = React.createRef();
@@ -71,7 +72,7 @@ class AgentDetail extends Component {
     myReader.readAsArrayBuffer(event);
     myReader.addEventListener("loadend", e => {
       let [head, body] = parsePacket(e.srcElement.result);
-      this.head = head;
+      
       console.log(head, body);
 
       if (head.cmdtype == CMD_AGENTSBROADCAST) {
@@ -164,12 +165,16 @@ class AgentDetail extends Component {
   }
 
   startTerminal() {
-    let out = encodeMsg({ Data: "" }, this.head.connid, CMD_TERMINAL, 1);
+    let out = encodeMsg({ Data: "" }, this.connid, CMD_TERMINAL, 1);
     this.websocketRef.current.sendMessage(out);
   }
 
   terminalToWs(data) {
-    let out = encodeMsg({ Data: data }, this.head.connid, CMD_TERMINAL, 1);
+    let out = encodeMsg({ Data: data }, this.connid, CMD_TERMINAL, 1);
+    this.websocketRef.current.sendMessage(out);
+  }
+  processAction(pid, action) {
+    let out = encodeMsg({ PID: pid, Action: action }, this.connid, CMD_PROCESS_ACTION, 1);
     this.websocketRef.current.sendMessage(out);
   }
 
@@ -356,7 +361,7 @@ class AgentDetail extends Component {
                 <Row>
                   <Col>
                     <h3 className={"card-title "}>Task Manager</h3>
-                    <TaskManager ref={this.taskmanagerRef} />
+                    <TaskManager ref={this.taskmanagerRef} sendtoTaskmgr={this.processAction}/>
                   </Col>
                 </Row>
               </CardBody>
@@ -364,7 +369,7 @@ class AgentDetail extends Component {
                 <button
                   onClick={event => {
                     console.log(event);
-                    let out = encodeMsg({ Interval: 5, Timeout: 200 }, this.head.connid, CMD_TASKMGR, 1);
+                    let out = encodeMsg({ Interval: 5, Timeout: 200 }, this.connid, CMD_TASKMGR, 1);
                     this.websocketRef.current.sendMessage(out);
                   }}
                 >
