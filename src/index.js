@@ -8,6 +8,20 @@ import "assets/scss/paper-dashboard.scss";
 import "assets/demo/demo.css";
 import Login from "components/Login/Login.jsx";
 import Dashboard from "layouts/Dashboard/Dashboard.jsx";
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("./firebase-messaging-sw.js")
+    .then(function(registration) {
+      console.log("Registration successful, scope is:", registration.scope);
+    })
+    .catch(function(err) {
+      console.log("Service worker registration failed, error:", err);
+
+
+    });
+}
+
 const hist = createBrowserHistory();
 
 ReactDOM.render(

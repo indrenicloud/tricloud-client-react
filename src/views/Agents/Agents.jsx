@@ -6,7 +6,7 @@ import Api from "service/Api";
 import "./Agents.css";
 import { Link, Route } from "react-router-dom";
 import NotificationAlert from "react-notification-alert";
-
+import { messaging } from "../../init-fcm";
 const api = new Api();
 class Agents extends Component {
   constructor(props) {
@@ -23,6 +23,17 @@ class Agents extends Component {
 
   componentDidMount() {
     this.getAgents();
+    messaging
+      .requestPermission()
+      .then(async function() {
+        const token = await messaging.getToken();
+        console.log(token);
+      })
+      .catch(function(err) {
+        console.log("Unable to get permission to notify.", err);
+      });
+
+    navigator.serviceWorker.addEventListener("message", message => console.log(message));
   }
   componentDidUpdate() {
     // this.getAgents();

@@ -8,6 +8,7 @@
     "bootstrap": ">=4.3.1",
     "chart.js": "2.7.2",
     "d3": "^5.9.2",
+    "firebase": "^6.1.1",
     "history": "4.7.2",
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
