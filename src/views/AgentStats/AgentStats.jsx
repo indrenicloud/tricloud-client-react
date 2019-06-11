@@ -21,7 +21,8 @@ class AgentStats extends Component {
     this.agentid = this.props.match.params.agentId;
     this.state = {
       all_stats: {},
-      mem_data: []
+      mem_data: {},
+      net_data: {}
     };
   }
 
@@ -39,15 +40,25 @@ class AgentStats extends Component {
     api.postData(url, data).then(result => {
       var mem_stats = [];
       var time_stamp = [];
+      var net_downs = [];
+      var net_ups = [];
       Object.entries(result.data).map(([key, value]) => {
         console.log(value);
         mem_stats.push(formatBytes(value.TotalMem - value.AvailableMem));
         time_stamp.push(new Date(value.TimeStamp / 1000000).toDateString());
+        net_ups.push(formatBytes(value.NetSentbytes));
+        net_downs.push(formatBytes(value.NetRecvbytes));
       });
+
       this.setState({
         all_stats: result.data,
         mem_data: {
           mem_stats: mem_stats,
+          time_stamp: time_stamp
+        },
+        net_data: {
+          net_ups: net_ups,
+          net_downs: net_downs,
           time_stamp: time_stamp
         }
       });
@@ -80,20 +91,71 @@ class AgentStats extends Component {
       }
     };
 
+    var NetChart = {
+      data: {
+        labels: this.state.net_data.time_stamp,
+        datasets: [
+          {
+            label: "Upload",
+            data: this.state.net_data.net_ups,
+            fill: false,
+            borderColor: "#fbc658",
+            backgroundColor: "transparent",
+            pointBorderColor: "#fbc658",
+            pointRadius: 4,
+            pointHoverRadius: 4,
+            pointBorderWidth: 8
+          },
+          {
+            label: "Download",
+            data: this.state.net_data.net_downs,
+            fill: false,
+            borderColor: "#abe658",
+            backgroundColor: "transparent",
+            pointBorderColor: "#abe658",
+            pointRadius: 4,
+            pointHoverRadius: 4,
+            pointBorderWidth: 8
+          }
+        ]
+      },
+      options: {
+        legend: {
+          display: true,
+          position: "bottom"
+        }
+      }
+    };
     return (
       <div className="content">
         <Row>
-          <Col xs={12} sm={6} md={6} lg={8}>
+          <Col xs={12} sm={6} md={6} lg={9}>
             <Card>
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title cpu_usage_title"}>Memory Graph</h3>
+                    <h3 className={"card-title text-center"}>Memory Graph</h3>
                   </Col>
                 </Row>
               </CardBody>
               <CardFooter>
                 <Line data={MemChart.data} options={MemChart.options} />
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={6} md={6} lg={9}>
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col>
+                    <h3 className={"card-title text-center"}>Network Graph</h3>
+                  </Col>
+                </Row>
+              </CardBody>
+              <CardFooter>
+                <Line data={NetChart.data} options={NetChart.options} />
               </CardFooter>
             </Card>
           </Col>
