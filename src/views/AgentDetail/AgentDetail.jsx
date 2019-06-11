@@ -75,6 +75,10 @@ class AgentDetail extends Component {
       
       console.log(head, body);
 
+      if(head.cmdtype == CMD_PROCESS_ACTION) {
+        console.log("SOMETHING KILLED")
+      }
+
       if (head.cmdtype == CMD_AGENTSBROADCAST) {
         this.ProcessAgentsBroadcast(head, body);
         return;
