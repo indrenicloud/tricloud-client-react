@@ -12,14 +12,16 @@ import Moment from "react-moment";
 import "moment-timezone";
 import { Line, Pie } from "react-chartjs-2";
 import { dashboardNASDAQChart } from "variables/charts.jsx";
+import { formatBytes } from "../../service/utility";
 const api = new Api();
 
 class AgentStats extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
+    this.agentid = this.props.match.params.agentId;
     this.state = {
-      all_stats: {}
+      all_stats: {},
+      mem_data: []
     };
   }
 
@@ -28,16 +30,56 @@ class AgentStats extends Component {
   }
 
   getStats() {
-    var url = "/api/agents/" + this.agentid + "/status/0/0";
-    api.getData(url).then(result => {
-      console.log("res", result);
-      // this.setState({
-      //   all_stats: result.data
-      // });
+    var url = "/api/agents/" + this.agentid + "/status";
+    console.log(url);
+    var data = {
+      noofentries: 0,
+      offset: 0
+    };
+    api.postData(url, data).then(result => {
+      var mem_stats = [];
+      var time_stamp = [];
+      Object.entries(result.data).map(([key, value]) => {
+        console.log(value);
+        mem_stats.push(formatBytes(value.TotalMem - value.AvailableMem));
+        time_stamp.push(new Date(value.TimeStamp / 1000000).toDateString());
+      });
+      this.setState({
+        all_stats: result.data,
+        mem_data: {
+          mem_stats: mem_stats,
+          time_stamp: time_stamp
+        }
+      });
     });
   }
 
   render() {
+    var MemChart = {
+      data: {
+        labels: this.state.mem_data.time_stamp,
+        datasets: [
+          {
+            label: "Memory Used",
+            data: this.state.mem_data.mem_stats,
+            fill: false,
+            borderColor: "#fbc658",
+            backgroundColor: "transparent",
+            pointBorderColor: "#fbc658",
+            pointRadius: 4,
+            pointHoverRadius: 4,
+            pointBorderWidth: 8
+          }
+        ]
+      },
+      options: {
+        legend: {
+          display: true,
+          position: "bottom"
+        }
+      }
+    };
+
     return (
       <div className="content">
         <Row>
@@ -46,12 +88,12 @@ class AgentStats extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title cpu_usage_title"}>CPU Stats</h3>
+                    <h3 className={"card-title cpu_usage_title"}>Memory Graph</h3>
                   </Col>
                 </Row>
               </CardBody>
               <CardFooter>
-                <Line data={dashboardNASDAQChart.data} options={dashboardNASDAQChart.options} />
+                <Line data={MemChart.data} options={MemChart.options} />
               </CardFooter>
             </Card>
           </Col>

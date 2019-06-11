@@ -140,7 +140,7 @@ const dashboardEmailStatisticsChart = {
 const dashboardNASDAQChart = {
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
+    datasets: [ 
       {
         data: [0, 19, 15, 20, 30, 40, 40, 50, 25, 30, 50, 70],
         fill: false,

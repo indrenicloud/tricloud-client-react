@@ -66,3 +66,20 @@ export function encodeMsg(msgstr, connid, cmdtype, flowtype) {
 
   return combined.buffer;
 }
+
+
+export function formatBytes(a, label) {
+    if (0 === a) return "0 Bytes";
+      var c = 1024,
+      d =  2,
+      e = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+      f = Math.floor(Math.log(a) / Math.log(c));
+      label = !!label;
+      console.log("label",label);
+      if (label==true){
+        return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
+      }
+      else{
+        return parseFloat((a / Math.pow(c, f)).toFixed(d));
+      }
+  }

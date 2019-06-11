@@ -1,14 +1,5 @@
 import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col,
-  CardFooter
-} from "reactstrap";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col, CardFooter } from "reactstrap";
 import { Link, Route } from "react-router-dom";
 import NotificationAlert from "react-notification-alert";
 import Websocket from "react-websocket";
@@ -24,14 +15,7 @@ import "./AgentDetail.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import MemDonut from "components/MemDonut/MemDonut";
-import {
-  parsePacket,
-  encodeMsg,
-  CMD_AGENTSBROADCAST,
-  CMD_SYSTEM_STAT,
-  CMD_TERMINAL,
-  CMD_TASKMGR
-} from "../../service/utility";
+import { parsePacket, encodeMsg, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_TASKMGR, formatBytes } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
 
 const api = new Api();
@@ -135,9 +119,7 @@ class AgentDetail extends Component {
     this.sys_usage = respBody;
     let stat_timestamp = this.sys_usage["TimeStamp"];
     let cpu_cores = this.sys_usage["CPUPercent"];
-    let totalcpu_usage = cpu_cores.reduce(
-      (previous, current) => (current += previous)
-    );
+    let totalcpu_usage = cpu_cores.reduce((previous, current) => (current += previous));
     let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
     let allcpu_usage = cpu_cores;
 
@@ -147,10 +129,7 @@ class AgentDetail extends Component {
     let mem_usage = [{ inits: "Free", value: 1 }, { inits: "Used", value: 99 }];
 
     if (total_mem && free_mem) {
-      mem_usage = [
-        { inits: "Free", value: free_mem },
-        { inits: "Used", value: total_mem - free_mem }
-      ];
+      mem_usage = [{ inits: "Free", value: free_mem }, { inits: "Used", value: total_mem - free_mem }];
     }
 
     let new_sentbytes = this.sys_usage["NetSentbytes"];
@@ -213,25 +192,16 @@ class AgentDetail extends Component {
         </div>
       );
     });
-    var systeminfo = Object.entries(this.state.systeminfo).map(
-      ([key, value]) => {
-        if (value.length > 0) {
-          return (
-            <div>
-              {key} : {value.toString()}
-            </div>
-          );
-        }
+    var systeminfo = Object.entries(this.state.systeminfo).map(([key, value]) => {
+      if (value.length > 0) {
+        return (
+          <div>
+            {key} : {value.toString()}
+          </div>
+        );
       }
-    );
-    function formatBytes(a, b) {
-      if (0 === a) return "0 Bytes";
-      var c = 1024,
-        d = b || 2,
-        e = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-        f = Math.floor(Math.log(a) / Math.log(c));
-      return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
-    }
+    });
+
     // let total_mem = this.sys_usage["TotalMem"];
     // let free_mem = this.sys_usage["AvailableMem"];
     // let mem_usage = [
@@ -263,14 +233,10 @@ class AgentDetail extends Component {
                   </Col>
                 </Row>
                 <div className="stats">
-                  <span>
-                    Total CPU Cores : {this.state.allcpu_usage.length}
-                  </span>
+                  <span>Total CPU Cores : {this.state.allcpu_usage.length}</span>
                   <ul id="allcpu_usage" className={"allcpu_usage"}>
                     {Object.keys(this.state.allcpu_usage).map(key => {
-                      return (
-                        <li>{Math.round(this.state.allcpu_usage[key])}% </li>
-                      );
+                      return <li>{Math.round(this.state.allcpu_usage[key])}% </li>;
                     })}
                   </ul>
                 </div>
@@ -278,9 +244,7 @@ class AgentDetail extends Component {
               <CardFooter>
                 <Row>
                   <Col>
-                    <h3 className="avgcpu_stats center">
-                      {this.state.avgcpu_usage}%{" "}
-                    </h3>
+                    <h3 className="avgcpu_stats center">{this.state.avgcpu_usage}% </h3>
                   </Col>
                 </Row>
               </CardFooter>
@@ -291,14 +255,9 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title mem_usage_title"}>
-                      Memory Usage
-                    </h3>
+                    <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
                     <div id="mem_usagebar">
-                      <MemDonut
-                        className="memory-donut"
-                        memory={this.state.memusage}
-                      />
+                      <MemDonut className="memory-donut" memory={this.state.memusage} />
                     </div>
                   </Col>
                 </Row>
@@ -319,13 +278,12 @@ class AgentDetail extends Component {
                   <Col>
                     <div className="netspeed_stats center">
                       <i className="nc-icon nc-minimal-up" />
-                      {formatBytes(this.state.netspeed["up"])}/s
+                      {formatBytes(this.state.netspeed["up"], true)}/s
                     </div>
                   </Col>
                   <Col>
                     <div className="netspeed_stats center">
-                      <i className="nc-icon nc-minimal-down" />{" "}
-                      {formatBytes(this.state.netspeed["down"])}/s
+                      <i className="nc-icon nc-minimal-down" /> {formatBytes(this.state.netspeed["down"], true)}/s
                     </div>
                   </Col>
                 </Row>
@@ -333,14 +291,10 @@ class AgentDetail extends Component {
               <CardFooter>
                 <Row>
                   <Col>
-                    <div className="netusage_stats center">
-                      {formatBytes(this.state.netusage["sentbytes"])}
-                    </div>
+                    <div className="netusage_stats center">{formatBytes(this.state.netusage["sentbytes"], true)}</div>
                   </Col>
                   <Col>
-                    <div className="netusage_stats center">
-                      {formatBytes(this.state.netusage["recvbytes"])}{" "}
-                    </div>
+                    <div className="netusage_stats center">{formatBytes(this.state.netusage["recvbytes"], true)} </div>
                   </Col>
                 </Row>
               </CardFooter>
@@ -352,9 +306,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title agent_info_title"}>
-                      Agent Info
-                    </h3>
+                    <h3 className={"card-title agent_info_title"}>Agent Info</h3>
                     <div id="agentinfo">{agentinfo}</div>
                   </Col>
                 </Row>
@@ -367,9 +319,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title system_info_title"}>
-                      System Details
-                    </h3>
+                    <h3 className={"card-title system_info_title"}>System Details</h3>
                     <div id="system_details">{systeminfo}</div>
                   </Col>
                 </Row>
@@ -389,10 +339,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <Terminal
-                      ref={this.terminalRef}
-                      sendtows={this.terminalToWs}
-                    />
+                    <Terminal ref={this.terminalRef} sendtows={this.terminalToWs} />
                   </Col>
                 </Row>
               </CardBody>
@@ -415,12 +362,7 @@ class AgentDetail extends Component {
                 <button
                   onClick={event => {
                     console.log(event);
-                    let out = encodeMsg(
-                      { Interval: 5, Timeout: 200 },
-                      this.head.connid,
-                      CMD_TASKMGR,
-                      1
-                    );
+                    let out = encodeMsg({ Interval: 5, Timeout: 200 }, this.head.connid, CMD_TASKMGR, 1);
                     this.websocketRef.current.sendMessage(out);
                   }}
                 >
@@ -431,16 +373,7 @@ class AgentDetail extends Component {
           </Col>
         </Row>
 
-        <Websocket
-          url={
-            "ws://" +
-            process.env.REACT_APP_API_URL +
-            "/websocket/" +
-            api.getToken()
-          }
-          ref={this.websocketRef}
-          onMessage={this.webSocketResponse.bind(this)}
-        />
+        <Websocket url={"ws://" + process.env.REACT_APP_API_URL + "/websocket/" + api.getToken()} ref={this.websocketRef} onMessage={this.webSocketResponse.bind(this)} />
       </div>
     );
   }
