@@ -34,7 +34,7 @@ class AgentStats extends Component {
     var url = "/api/agents/" + this.agentid + "/status";
     console.log(url);
     var data = {
-      noofentries: 0,
+      noofentries: 10000,
       offset: 0
     };
     api.postData(url, data).then(result => {
@@ -45,7 +45,7 @@ class AgentStats extends Component {
       Object.entries(result.data).map(([key, value]) => {
         console.log(value);
         mem_stats.push(formatBytes(value.TotalMem - value.AvailableMem));
-        time_stamp.push(new Date(value.TimeStamp / 1000000).toDateString());
+        time_stamp.push(new Date(value.TimeStamp / 1000000));
         net_ups.push(formatBytes(value.NetSentbytes));
         net_downs.push(formatBytes(value.NetRecvbytes));
       });
@@ -84,6 +84,26 @@ class AgentStats extends Component {
         ]
       },
       options: {
+        scales: {
+          xAxes: [
+            {
+              type: "time",
+              distribution: "series",
+              ticks: {
+                source: "data",
+                autoSkip: true
+              }
+            }
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "GB"
+              }
+            }
+          ]
+        },
         legend: {
           display: true,
           position: "bottom"
@@ -120,6 +140,26 @@ class AgentStats extends Component {
         ]
       },
       options: {
+        scales: {
+          xAxes: [
+            {
+              type: "time",
+              distribution: "series",
+              ticks: {
+                source: "data",
+                autoSkip: true
+              }
+            }
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "Data Transfer"
+              }
+            }
+          ]
+        },
         legend: {
           display: true,
           position: "bottom"
