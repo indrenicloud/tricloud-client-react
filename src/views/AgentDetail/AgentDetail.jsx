@@ -339,6 +339,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
+                    <h3 className={"card-title "}>Terminal</h3>
                     <Terminal ref={this.terminalRef} sendtows={this.terminalToWs} />
                   </Col>
                 </Row>
@@ -354,6 +355,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
+                    <h3 className={"card-title "}>Task Manager</h3>
                     <TaskManager ref={this.taskmanagerRef} />
                   </Col>
                 </Row>
