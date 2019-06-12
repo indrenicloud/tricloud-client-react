@@ -1,11 +1,10 @@
 importScripts("https://www.gstatic.com/firebasejs/5.9.4/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/5.9.4/firebase-messaging.js");
 
-firebase.initializeApp({
-	// Project Settings => Add Firebase to your web app
-  messagingSenderId: "377332520632"
-});
 
+let config = {  
+        messagingSenderId: "377332520632"
+}
 firebase.initializeApp(config);
 const messaging = firebase.messaging();
 
@@ -16,6 +15,8 @@ messaging.setBackgroundMessageHandler(payload => {
       body: payload.notification.body,
       icon: payload.notification.icon
    }
+   console.log("title", title);
+   console.log("options" , options);
    return self.registration.showNotification(title, options);
 })
 self.addEventListener("notificationclick", function(event) {
