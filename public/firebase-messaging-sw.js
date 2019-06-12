@@ -1,10 +1,10 @@
 importScripts("https://www.gstatic.com/firebasejs/5.9.4/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/5.9.4/firebase-messaging.js");
 
-firebase.initializeApp({
+var config = {
 	// Project Settings => Add Firebase to your web app
   messagingSenderId: "377332520632"
-});
+}
 
 firebase.initializeApp(config);
 const messaging = firebase.messaging();
