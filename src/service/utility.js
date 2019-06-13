@@ -8,7 +8,10 @@ export const CMD_SERVICE_ACTION = 6;
 export const CMD_EXIT = 7;
 export const CMD_GCM_TOKEN = 8;
 export const CMD_AGENTSBROADCAST = 9;
-export const CMD_BUILTIN_MAX = 10;
+export const CMD_EVENTS = 10;
+export const CMD_FM_LISTDIR = 11;
+export const CMD_SYSTEM_ACTION = 12;
+export const CMD_BUILTIN_MAX = 13;
 
 export function parsePacket(arrbuf) {
   //let ubuff = new Uint8Array(data);
@@ -67,19 +70,17 @@ export function encodeMsg(msgstr, connid, cmdtype, flowtype) {
   return combined.buffer;
 }
 
-
 export function formatBytes(a, label) {
-    if (0 === a) return "0 Bytes";
-      var c = 1024,
-      d =  2,
-      e = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-      f = Math.floor(Math.log(a) / Math.log(c));
-      label = !!label;
-      console.log("label",label);
-      if (label==true){
-        return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
-      }
-      else{
-        return parseFloat((a / Math.pow(c, f)).toFixed(d));
-      }
+  if (0 === a) return "0 Bytes";
+  var c = 1024,
+    d = 2,
+    e = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+    f = Math.floor(Math.log(a) / Math.log(c));
+  label = !!label;
+  console.log("label", label);
+  if (label == true) {
+    return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
+  } else {
+    return parseFloat((a / Math.pow(c, f)).toFixed(d));
   }
+}

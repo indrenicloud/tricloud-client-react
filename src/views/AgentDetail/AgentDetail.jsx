@@ -7,6 +7,7 @@ import { number } from "prop-types";
 
 import UsageBar from "components/UsageBar/UsageBar";
 import Terminal from "components/Terminal/Terminal";
+import FileMesser from "components/FileMesser/FileMesser";
 import Stats from "components/Stats/Stats.jsx";
 import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
@@ -15,7 +16,7 @@ import "./AgentDetail.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import MemDonut from "components/MemDonut/MemDonut";
-import { parsePacket, encodeMsg, CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_TASKMGR, formatBytes } from "../../service/utility";
+import { parsePacket, encodeMsg, CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_FM_LISTDIR, CMD_TASKMGR, formatBytes } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
 import FileManager from "../../components/FileManager/FileManager";
 
@@ -45,9 +46,11 @@ class AgentDetail extends Component {
     this.startTerminal = this.startTerminal.bind(this);
     this.ProcessAgentsBroadcast = this.ProcessAgentsBroadcast.bind(this);
     this.processAction = this.processAction.bind(this);
+    this.ListDirToWS = this.ListDirToWS.bind(this);
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
     this.taskmanagerRef = React.createRef();
+    this.FileMesserRef = React.createRef();
     this.sys_usage = {};
     this.head = {};
   }
@@ -102,6 +105,10 @@ class AgentDetail extends Component {
           if (_func != null) {
             _func(body);
           }
+          break;
+        case CMD_FM_LISTDIR:
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
+          this.FileMesserRef.current.inData(body);
           break;
         default:
           console.log("Not implemented");
@@ -184,6 +191,11 @@ class AgentDetail extends Component {
     let out = encodeMsg({ PID: pid, Action: action }, this.connid, CMD_PROCESS_ACTION, 1);
     this.websocketRef.current.sendMessage(out);
   }
+  ListDirToWS(data) {
+    let out = encodeMsg({ Path: data }, this.connid, CMD_FM_LISTDIR, 1);
+    this.websocketRef.current.sendMessage(out);
+  }
+
   rebootAgent() {}
   shutdownAgent() {}
   render() {
@@ -407,6 +419,15 @@ class AgentDetail extends Component {
                   Show Processes
                 </button>
               </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={12} md={12} lg={12}>
+            <Card>
+              <CardBody>
+                <FileMesser ref={this.FileMesserRef} listfileSend={this.ListDirToWS} />
+              </CardBody>
             </Card>
           </Col>
         </Row>
