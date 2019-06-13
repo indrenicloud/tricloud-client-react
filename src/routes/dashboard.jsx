@@ -1,8 +1,8 @@
 import Dashboard from "views/Dashboard/Dashboard.jsx";
-import UserPage from "views/UserPage/UserPage.jsx";
 import Agents from "views/Agents/Agents.jsx";
 import Settings from "views/Settings/Settings.jsx";
 import Logout from "../components/Logout/Logout";
+import Users from "../views/Users/Users";
 
 var dashRoutes = [
   // {
@@ -23,12 +23,12 @@ var dashRoutes = [
   //   icon: "nc-icon nc-settings-gear-65",
   //   component: Settings
   // },
-  // {
-  //   path: "/user-page",
-  //   name: "Profile",
-  //   icon: "nc-icon nc-single-02",
-  //   component: UserPage
-  // },
+  {
+    path: "/users",
+    name: "Users",
+    icon: "nc-icon nc-single-02",
+    component: Users
+  },
   {
     path: "/logout",
     name: "Logout",
