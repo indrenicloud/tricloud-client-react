@@ -9,6 +9,9 @@ export default class FileMesser extends Component {
     this.outData.bind(this);
     this.inData.bind(this);
     this.myDirData = "Nothingness";
+    this.state = {
+      currentdir: []
+    };
   }
 
   outData() {
@@ -17,15 +20,22 @@ export default class FileMesser extends Component {
   }
 
   inData(data) {
-    this.myDirData = JSON.stringify(data);
-    console.log(data);
+    this.myDirData = data.FSNodes;
+    this.setState({
+      currentdir: data
+    });
   }
 
   render() {
     return (
       this.dataloaded && (
         <div>
-          <h3>Just Messing around {this.myDirData}</h3>
+          <h3>Just Messing around</h3>
+          {Object.keys(this.myDirData).map(index => (
+            <p>
+              {this.myDirData[index].Name} {this.myDirData[index].Size} {this.myDirData[index].Type}
+            </p>
+          ))}
           <button
             onClick={event => {
               console.log("clicked fm");
