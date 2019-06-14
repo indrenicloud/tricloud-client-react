@@ -2,53 +2,98 @@ import React, { Component } from "react";
 
 // reactstrap components
 import { Button, Card, CardHeader, CardBody, CardFooter, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
-import Agents from "../Agents/Agents";  
+import Agents from "../Agents/Agents";
+import Api from "service/Api";
+import Avatar from "react-avatar";
+import "./UserProfile.css";
+
+const api = new Api();
 class UserProfile extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.userid = this.props.match.params.userId;
+    this.state = {
+      currentuser: {},
+      apikeys: []
+    };
+    this.getUserDetail = this.getUserDetail.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
+
+  componentDidMount() {
+    this.getUserDetail();
+  }
+
+  getUserDetail() {
+    api.getData("/api/users/" + this.userid).then(resp => {
+      const currentuser = resp.data;
+      this.setState({
+        currentuser: currentuser,
+        apikeys: currentuser.apikey
+      });
+    });
+  }
+
+  handleDelete(apikey) {
+    api.deleteData("/api/user/api/" + apikey).then(resp => {
+      console.log(resp);
+      this.getUserDetail();
+    });
+  }
+
+  addApiKey() {
+    api.postData("/api/user/api", {}).then(resp => {
+      console.log(resp);
+
+      this.getUserDetail();
+    });
+  }
+
   render() {
+    if (this.state.apikeys != null) {
+      var apikeys = this.state.apikeys.map((key, index) => {
+        return (
+          <li className="blockquote blockquote-primary" for={index}>
+            <p>{key}</p>
+
+            <i className="nc-icon nc-simple-remove text-danger deleteapikey" onClick={() => this.handleDelete(key)} />
+          </li>
+        );
+      });
+    } else {
+      var apikeys = <li className=" blockquote blockquote-primary text-center">Api key not found! Please create one.</li>;
+    }
+
     return (
       <>
         <div className="content">
           <Row>
-            <Col md="4">
+            <Col md="6">
               <Card className="card-user">
-                <div className="image">
-                  <img alt="..." src={require("assets/img/damir-bosnjak.jpg")} />
-                </div>
+                <div className="image" />
                 <CardBody>
                   <div className="author">
                     <a href="#pablo" onClick={e => e.preventDefault()}>
-                      <img alt="..." className="avatar border-gray" src={require("assets/img/mike.jpg")} />
-                      <h5 className="title">Chet Faker</h5>
+                      <Avatar email={this.state.currentuser.email} name={this.state.currentuser.fullname} />
+                      <h5 className="title">{this.state.currentuser.fullname}</h5>
                     </a>
-                    <p className="description">@chetfaker</p>
+                    <p className="description">@{this.state.currentuser.id}</p>
                   </div>
-                  <p className="description text-center">
-                    "I like the way you work it <br />
-                    No diggity <br />I wanna bag it up"
-                  </p>
                 </CardBody>
                 <CardFooter>
                   <hr />
-                  <div className="button-container">
-                    <Row>
-                      <Col className="ml-auto" lg="3" md="6" xs="6" />
-                      <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
-                        <h5>
-                          6 <br />
-                          <small>Agents</small>
-                        </h5>
-                      </Col>
-                      <Col className="mr-auto" lg="3" />
-                    </Row>
+                  <div className="apikeys">
+                    <h4 className="text-center">
+                      Api Keys <i className="col nc-icon nc-simple-add text-success" onClick={() => this.addApiKey()} />
+                    </h4>
+                    <ul>
+                      <code>{apikeys}</code>
+                    </ul>
                   </div>
                 </CardFooter>
               </Card>
             </Col>
-            <Col md="8">
+            <Col md="6">
               <Card className="card-user">
                 <CardHeader>
                   <CardTitle tag="h5">Edit Profile</CardTitle>
