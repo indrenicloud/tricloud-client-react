@@ -17,12 +17,7 @@ var dashRoutes = [
     icon: "nc-icon nc-app",
     component: Agents
   },
-  // {
-  //   path: "/settings",
-  //   name: "Settings",
-  //   icon: "nc-icon nc-settings-gear-65",
-  //   component: Settings
-  // },
+
   {
     path: "/users",
     name: "Users",
@@ -30,9 +25,23 @@ var dashRoutes = [
     component: Users
   },
   {
+    path: "/alerts",
+    name: "Alerts",
+    icon: "nc-icon nc-alert-circle-i",
+    component: ""
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    icon: "nc-icon nc-settings-gear-65",
+    component: ""
+  },
+
+  {
+    pro: true,
     path: "/logout",
     name: "Logout",
-    icon: "nc-icon nc-caps-small",
+    icon: "nc-icon nc-minimal-left",
     component: Logout
   },
   { redirect: true, path: "/", pathTo: "/agents", name: "Dashboard" }
