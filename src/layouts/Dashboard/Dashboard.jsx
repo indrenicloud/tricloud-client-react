@@ -9,6 +9,7 @@ import Sidebar from "components/Sidebar/Sidebar.jsx";
 import AgentDetail from "views/AgentDetail/AgentDetail";
 import AgentStats from "views/AgentStats/AgentStats";
 import dashboardRoutes from "routes/dashboard.jsx";
+import UserProfile from "../../views/UserProfile/UserProfile";
 
 var ps;
 
@@ -54,6 +55,7 @@ class Dashboard extends React.Component {
             <Route path="/agents/:agentId/stats/" component={AgentStats} />
 
             <Route path="/agents/:agentId" component={AgentDetail} />
+            <Route path="/users/:userId" component={UserProfile} />
 
             {dashboardRoutes.map((prop, key) => {
               if (prop.redirect) {

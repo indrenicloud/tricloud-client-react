@@ -145,7 +145,7 @@ class Users extends Component {
                             <td>{prop.superuser == true ? "Admin" : "Normal"}</td>
                             <td>
                               <div className="row">
-                                <Link to={``}>
+                                <Link to={`/users/` + prop.id}>
                                   <i className="col nc-icon nc-button-play text-success" />
                                 </Link>
                                 <i className="col nc-icon nc-simple-remove text-danger deleteagent" onClick={() => this.handleDelete(prop, key)} />

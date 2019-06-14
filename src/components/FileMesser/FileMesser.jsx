@@ -1,13 +1,5 @@
 import React, { Component, Fragment } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col
-} from "reactstrap";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col } from "reactstrap";
 import "./FileMesser.css";
 
 export default class FileMesser extends Component {
