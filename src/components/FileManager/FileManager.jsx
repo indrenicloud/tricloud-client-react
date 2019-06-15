@@ -1,4 +1,8 @@
 import React, { Component, Fragment } from "react";
+
+import FmHead from "./subcom/FmHead";
+import FmBody from "./subcom/FmBody";
+
 import {
   Card,
   CardBody,
@@ -6,14 +10,29 @@ import {
   CardTitle,
   Table,
   Row,
-  Col
+  Col,
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  Container,
+  InputGroup,
+  InputGroupText,
+  InputGroupAddon,
+  Input
 } from "reactstrap";
 import "./FileManager.css";
 
 export default class FileManager extends Component {
   constructor(props) {
     super(props);
-    this.dataloaded = false;
+    this.dataloaded = true;
     this.inData.bind(this);
     this.myDirData = "Nothingness";
     this.state = {
@@ -42,6 +61,19 @@ export default class FileManager extends Component {
     return (
       this.dataloaded && (
         <div>
+          <Navbar className="fm-nav">
+            <FmHead />
+          </Navbar>
+          <FmBody />
+        </div>
+      )
+    );
+  }
+}
+
+/* 
+
+<div>
           <h3>Just Messing around</h3>
           {Object.keys(this.myDirData).map(index => (
             <p>
@@ -58,7 +90,5 @@ export default class FileManager extends Component {
             Refresh{" "}
           </button>
         </div>
-      )
-    );
-  }
-}
+
+*/

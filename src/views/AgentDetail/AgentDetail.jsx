@@ -424,12 +424,10 @@ class AgentDetail extends Component {
         {/* File Manager */}
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
-            <Card>
-              <CardBody>
+            <Card className="fm-card">
+              <CardBody className="fm-cardbody">
                 <Row>
                   <Col>
-                    <h3 className={"card-title "}>File Manager</h3>
-
                     <FileManager
                       ref={this.FileManagerRef}
                       SendToWs={this.SendToWs}
