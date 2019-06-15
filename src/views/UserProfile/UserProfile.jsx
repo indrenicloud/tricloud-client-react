@@ -14,10 +14,13 @@ class UserProfile extends Component {
     this.userid = this.props.match.params.userId;
     this.state = {
       currentuser: {},
-      apikeys: []
+      apikeys: [],
+      edituser: {}
     };
     this.getUserDetail = this.getUserDetail.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.editProfile = this.editProfile.bind(this);
   }
 
   componentDidMount() {
@@ -48,7 +51,29 @@ class UserProfile extends Component {
       this.getUserDetail();
     });
   }
+  onChange(e) {
+    const { edituser } = { ...this.state };
+    const currentState = edituser;
+    const { name, value } = e.target;
+    currentState[name] = value;
+    this.setState({ edituser: currentState });
+  }
 
+  editProfile(e) {
+    const { edituser } = { ...this.state };
+    if (edituser.password !== edituser.confirmpassword) {
+      alert("Password mismatch");
+    } else {
+      const data = edituser;
+      api.putData("/api/users/" + this.userid, data).then(resp => {
+        console.log(resp);
+        // this.setState({
+        //   currentuser: resp.data
+        // });
+      });
+    }
+    e.preventDefault();
+  }
   render() {
     if (this.state.apikeys != null) {
       var apikeys = this.state.apikeys.map((key, index) => {
@@ -104,13 +129,13 @@ class UserProfile extends Component {
                       <Col className="px-1" md="6">
                         <FormGroup>
                           <label>Username</label>
-                          <Input defaultValue="aryan" placeholder="Username" type="text" />
+                          <Input defaultValue={this.state.currentuser.id} name="username" disabled placeholder="Username" type="text" />
                         </FormGroup>
                       </Col>
                       <Col className="pl-1" md="6">
                         <FormGroup>
-                          <label htmlFor="exampleInputEmail1">Email address</label>
-                          <Input placeholder="Email" type="email" />
+                          <label>Email address</label>
+                          <Input defaultValue={this.state.currentuser.email} name="email" placeholder="email" type="email" onChange={this.onChange} />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -118,13 +143,18 @@ class UserProfile extends Component {
                       <Col className="pr-1" md="6">
                         <FormGroup>
                           <label>Full Name</label>
-                          <Input defaultValue="Arun" placeholder="Company" type="text" />
+                          <Input defaultValue={this.state.currentuser.fullname} name="fullname" placeholder="full name" type="text" onChange={this.onChange} />
                         </FormGroup>
                       </Col>
-                      <Col className="pl-1" md="6">
+                      <Col md="6">
                         <FormGroup>
-                          <label>Last Name</label>
-                          <Input defaultValue="Pyasi" placeholder="Last Name" type="text" />
+                          <label>User Type </label>
+                          <p>
+                            <select name="user_type" onChange={this.onChange}>
+                              <option value="Normal">Normal</option>
+                              <option value="Admin">Admin</option>
+                            </select>
+                          </p>
                         </FormGroup>
                       </Col>
                     </Row>
@@ -132,27 +162,20 @@ class UserProfile extends Component {
                       <Col md="6">
                         <FormGroup>
                           <label>Password</label>
-                          <Input placeholder="password" type="text" />
+                          <Input placeholder="password" name="password" type="password" onChange={this.onChange} />
                         </FormGroup>
                       </Col>
+
                       <Col md="6">
                         <FormGroup>
                           <label>Re-enter Password</label>
-                          <Input placeholder="password" type="text" />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md="12">
-                        <FormGroup>
-                          <label>Admin </label>
-                          <input type="checkbox" />
+                          <Input placeholder="password" name="confirmpassword" type="password" onChange={this.onChange} />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
                       <div className="update ml-auto mr-auto">
-                        <Button className="btn-round" color="primary" type="submit">
+                        <Button className="btn-round" color="primary" onClick={this.editProfile}>
                           Update Profile
                         </Button>
                       </div>
