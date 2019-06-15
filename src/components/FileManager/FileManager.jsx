@@ -48,7 +48,7 @@ export default class FileManager extends Component {
 
   componentDidUpdate() {
     if (!this.dataloaded) {
-      this.props.SendToWs({ Path: "./" }, 11);
+      this.props.SendToWs({ Path: "." }, 11);
     }
   }
 
