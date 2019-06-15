@@ -32,21 +32,17 @@ import "./FileManager.css";
 export default class FileManager extends Component {
   constructor(props) {
     super(props);
-    this.dataloaded = true;
+    this.dataloaded = false;
     this.inData.bind(this);
-    this.myDirData = "Nothingness";
     this.state = {
-      currentdir: []
+      fileslist: [{ Name: ".", Type: ".", Size: "." }]
     };
-
-    //this.props.SendToWs({ Path: "./" }, 12);
   }
 
   inData(data) {
-    this.myDirData = data.FSNodes;
-
+    this.dataloaded = true;
     this.setState({
-      currentdir: data
+      fileslist: data.FSNodes
     });
   }
 
@@ -54,7 +50,6 @@ export default class FileManager extends Component {
     if (!this.dataloaded) {
       this.props.SendToWs({ Path: "./" }, 11);
     }
-    this.dataloaded = true;
   }
 
   render() {
@@ -64,31 +59,9 @@ export default class FileManager extends Component {
           <Navbar className="fm-nav">
             <FmHead />
           </Navbar>
-          <FmBody />
+          <FmBody files={this.state.fileslist} />
         </div>
       )
     );
   }
 }
-
-/* 
-
-<div>
-          <h3>Just Messing around</h3>
-          {Object.keys(this.myDirData).map(index => (
-            <p>
-              {this.myDirData[index].Name} {this.myDirData[index].Size}{" "}
-              {this.myDirData[index].Type}
-            </p>
-          ))}
-          <button
-            onClick={event => {
-              console.log("clicked fm");
-              this.props.SendToWs({ Path: "./" }, 11);
-            }}
-          >
-            Refresh{" "}
-          </button>
-        </div>
-
-*/
