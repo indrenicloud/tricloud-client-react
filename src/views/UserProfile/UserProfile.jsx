@@ -195,11 +195,11 @@ class UserProfile extends Component {
               </Card>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col>
-              <Agents />
+              <Agents agentuser={this.state.currentuser.id} />
             </Col>
-          </Row>
+          </Row> */}
         </div>
       </>
     );

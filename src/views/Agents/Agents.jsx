@@ -11,6 +11,7 @@ const api = new Api();
 class Agents extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       agents: null,
       agentsinfo: [],
@@ -40,6 +41,10 @@ class Agents extends Component {
   }
 
   getAgents() {
+    const agentuser = this.props.agentuser;
+
+    console.log("agentuser", agentuser);
+
     api.getData("/api/agents").then(result => {
       let agentsinfos = [];
       if (result.data.length > 0) {
