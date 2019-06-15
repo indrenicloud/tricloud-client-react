@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Button, Card, CardHeader, CardBody, CardFooter, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
 import Agents from "../Agents/Agents";
 import Api from "service/Api";
+import withAuth from "components/Login/withAuth";
 import Avatar from "react-avatar";
 import "./UserProfile.css";
 
@@ -45,11 +46,15 @@ class UserProfile extends Component {
   }
 
   addApiKey() {
-    api.postData("/api/user/api", {}).then(resp => {
-      console.log(resp);
+    if (this.props.user.u === this.state.currentuser.id) {
+      api.postData("/api/user/api", {}).then(resp => {
+        console.log(resp);
 
-      this.getUserDetail();
-    });
+        this.getUserDetail();
+      });
+    } else {
+      alert("Adding API key is not permitted");
+    }
   }
   onChange(e) {
     const { edituser } = { ...this.state };
@@ -67,9 +72,13 @@ class UserProfile extends Component {
       const data = edituser;
       api.putData("/api/users/" + this.userid, data).then(resp => {
         console.log(resp);
-        // this.setState({
-        //   currentuser: resp.data
-        // });
+        if (resp.status != "failed") {
+          // this.setState({
+          //   currentuser: resp.data
+          // });
+        } else {
+          alert("Failed to edit the profile");
+        }
       });
     }
     e.preventDefault();
@@ -107,6 +116,7 @@ class UserProfile extends Component {
                 </CardBody>
                 <CardFooter>
                   <hr />
+
                   <div className="apikeys">
                     <h4 className="text-center">
                       Api Keys <i className="col nc-icon nc-simple-add text-success" onClick={() => this.addApiKey()} />
@@ -146,7 +156,7 @@ class UserProfile extends Component {
                           <Input defaultValue={this.state.currentuser.fullname} name="fullname" placeholder="full name" type="text" onChange={this.onChange} />
                         </FormGroup>
                       </Col>
-                      <Col md="6">
+                      {/* <Col md="6">
                         <FormGroup>
                           <label>User Type </label>
                           <p>
@@ -156,7 +166,7 @@ class UserProfile extends Component {
                             </select>
                           </p>
                         </FormGroup>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Row>
                       <Col md="6">
@@ -196,4 +206,4 @@ class UserProfile extends Component {
   }
 }
 
-export default UserProfile;
+export default withAuth(UserProfile);
