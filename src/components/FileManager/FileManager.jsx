@@ -75,18 +75,34 @@ export default class FileManager extends Component {
 
   doAction(actionName) {
     console.log("ACTIONFIRED", actionName);
+    let selected = this.FmBodyRef.current.getSelections();
+    let out = {};
     switch (actionName) {
       case "mkdir":
         //pass
         break;
+      case "rename":
+        if (selected.length > 1) {
+          console.log("cannot rename multiple element at once");
+          return;
+        }
+        return;
+        out = {
+          Action: actionName,
+          Basepath: this.Path,
+          Targets: selected
+        };
+        this.props.SendToWs(out, 12);
+        break;
       case "back":
         this.props.SendToWs({ Path: this.ParentPath }, 11);
         break;
-      case "mkdir":
-        break;
       case "delete":
-        let selected = this.FmBodyRef.current.getSelections();
-        let out = {Action:"delete", Basepath:this.Path,Targets:selected  }
+        out = {
+          Action: actionName,
+          Basepath: this.Path,
+          Targets: selected
+        };
         this.props.SendToWs(out, 12);
         break;
       default:
