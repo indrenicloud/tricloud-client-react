@@ -63,14 +63,13 @@ export default class FmHead extends Component {
           <input className="form-control" value={this.props.path} />
         </div>
         <div>
-          {/* CREATE FOLDER */}
+          {/* DELETE*/}
           <button
             class="navarrow"
             title="Delete"
             onClick={e => this.props.doaction("delete")}
           >
             <div class="oc-svg oc-fm--toolbar__item-icon">
-              {"D"}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="48"
@@ -78,7 +77,7 @@ export default class FmHead extends Component {
                 viewBox="0 0 48 48"
                 focusable="false"
               >
-                <path d="" />
+                <path d="M12 38c0 2.21 1.79 4 4 4h16c2.21 0 4-1.79 4-4V14H12v24zM38 8h-7l-2-2H19l-2 2h-7v4h28V8z" />
               </svg>
             </div>
           </button>
