@@ -31,6 +31,7 @@ export default class FmHead extends Component {
   render() {
     return (
       <Container fluid>
+        {/* BACK */}
         <div className="navarrow-cont">
           <button
             className="navarrow"
@@ -44,6 +45,7 @@ export default class FmHead extends Component {
             >
               <path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z" />
             </svg>
+            {/* FORWARD */}
           </button>
           <button className="navarrow">
             <svg
@@ -57,10 +59,36 @@ export default class FmHead extends Component {
           </button>
         </div>
         <div>
+          {/* ADDDESS BAR */}
           <input className="form-control" value={this.props.path} />
         </div>
         <div>
-          <button class="navarrow" title="Create folder">
+          {/* CREATE FOLDER */}
+          <button
+            class="navarrow"
+            title="Delete"
+            onClick={e => this.props.doaction("delete")}
+          >
+            <div class="oc-svg oc-fm--toolbar__item-icon">
+              {"D"}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                viewBox="0 0 48 48"
+                focusable="false"
+              >
+                <path d="" />
+              </svg>
+            </div>
+          </button>
+          
+          {/* CREATE FOLDER */}
+          <button
+            class="navarrow"
+            title="Create folder"
+            onClick={e => this.props.doaction("mkdir")}
+          >
             <div class="oc-svg oc-fm--toolbar__item-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -73,6 +101,7 @@ export default class FmHead extends Component {
               </svg>
             </div>
           </button>
+          {/* UPLOAD*/}
           <button class="navarrow" title="upload">
             <div class="oc-svg oc-fm--toolbar__item-icon">
               <svg

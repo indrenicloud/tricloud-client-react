@@ -74,12 +74,20 @@ export default class FileManager extends Component {
   }
 
   doAction(actionName) {
+    console.log("ACTIONFIRED", actionName);
     switch (actionName) {
       case "mkdir":
         //pass
         break;
       case "back":
         this.props.SendToWs({ Path: this.ParentPath }, 11);
+        break;
+      case "mkdir":
+        break;
+      case "delete":
+        let selected = this.FmBodyRef.current.getSelections();
+        let out = {Action:"delete", Basepath:this.Path,Targets:selected  }
+        this.props.SendToWs(out, 12);
         break;
       default:
         break;
@@ -97,6 +105,7 @@ export default class FileManager extends Component {
             files={this.state.fileslist}
             listDir={this.listDir}
             path={this.Path}
+            ref={this.FmBodyRef}
           />
         </div>
       )

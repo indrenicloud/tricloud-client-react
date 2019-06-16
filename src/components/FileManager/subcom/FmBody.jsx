@@ -63,6 +63,7 @@ class FmBody extends React.Component {
 
   componentWillReceiveProps({ path }) {
     if (path != this.Path) {
+      this.Path = path;
       this.setState({ selections: [] });
     }
   }
