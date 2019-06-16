@@ -413,7 +413,7 @@ class AgentDetail extends Component {
                 <Row>
                   <Col>
                     <h3 className={"card-title "}>Task Manager</h3>
-                    <TaskManager ref={this.taskmanagerRef} sendtoTaskmgr={this.processAction} />
+                    <TaskManager ref={this.taskmanagerRef} SendToWs={this.SendToWs} />
                   </Col>
                 </Row>
               </CardBody>

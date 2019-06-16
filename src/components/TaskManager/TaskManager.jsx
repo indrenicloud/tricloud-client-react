@@ -11,12 +11,13 @@ export default class TaskManager extends Component {
     });
     this.dataloaded = false;
     this.killProcess = this.killProcess.bind(this);
+    this.updateTerminal = this.updateTerminal.bind(this);
   }
 
-  componentDidMount() {
-    // if (!this.dataloaded) {
-    //   this.props.updateTerminal();
-    // }
+  componentDidUpdate() {
+    if (!this.dataloaded) {
+      this.props.SendToWs({ Interval: 5, Timeout: 200 }, 3);
+    }
   }
 
   getFilteredProcesses = () =>
