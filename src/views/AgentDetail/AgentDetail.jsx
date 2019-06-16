@@ -43,7 +43,6 @@ class AgentDetail extends Component {
     this.ProcessTerminal = this.ProcessTerminal.bind(this);
     this.ProcessSystemStat = this.ProcessSystemStat.bind(this);
     this.ProcessAgentsBroadcast = this.ProcessAgentsBroadcast.bind(this);
-    this.processAction = this.processAction.bind(this);
     this.SendToWs = this.SendToWs.bind(this);
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
@@ -194,11 +193,6 @@ class AgentDetail extends Component {
       netspeed: netspeed,
       stat_timestamp: stat_timestamp
     });
-  }
-
-  processAction(pid, action) {
-    let out = encodeMsg({ PID: pid, Action: action }, this.connid, CMD_PROCESS_ACTION, 1);
-    this.websocketRef.current.sendMessage(out);
   }
 
   SendToWs(dataobj, _cmdType) {
@@ -413,7 +407,7 @@ class AgentDetail extends Component {
                 <Row>
                   <Col>
                     <h3 className={"card-title "}>Task Manager</h3>
-                    <TaskManager ref={this.taskmanagerRef} sendtoTaskmgr={this.processAction} />
+                    <TaskManager ref={this.taskmanagerRef} SendToWs={this.SendToWs} />
                   </Col>
                 </Row>
               </CardBody>
