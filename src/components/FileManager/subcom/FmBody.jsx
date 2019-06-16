@@ -55,7 +55,6 @@ class FmBody extends React.Component {
                   <th>{file.Type}</th>
                 </tr>
               ))}
-            ;
           </tbody>
         </table>
       </div>
