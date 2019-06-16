@@ -33,7 +33,8 @@ import {
   CMD_TERMINAL,
   CMD_FM_LISTDIR,
   CMD_TASKMGR,
-  formatBytes
+  formatBytes,
+  CMD_EVENTS
 } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
 import FileManager from "../../components/FileManager/FileManager";
@@ -103,6 +104,25 @@ class AgentDetail extends Component {
         this.ProcessAgentsBroadcast(head, body);
         return;
       }
+
+      if (head.cmdtype == CMD_EVENTS) {
+        // PEPSI Events alert here
+        console.log(body);
+        let options = {
+          type: "success",
+          place: "tr",
+          message: (
+            <div>
+              <div>{"Event about sth"}</div>
+            </div>
+          ),
+          icon: "nc-icon nc-bell-55",
+          autoDismiss: 7
+        };
+        //this.refs.NotificationAlert(options);
+        return;
+      }
+
       if (this.connid != head.connid) {
         console.log("THIS PACKET");
         console.log(body);
