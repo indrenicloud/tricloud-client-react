@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, createRef } from "react";
 
 import FmHead from "./subcom/FmHead";
 import FmBody from "./subcom/FmBody";
@@ -39,6 +39,8 @@ export default class FileManager extends Component {
     this.inData = this.inData.bind(this);
     this.listDir = this.listDir.bind(this);
     this.back = this.back.bind(this);
+    this.doAction = this.doAction.bind(this);
+    this.FmBodyRef = createRef();
     this.Path = ".";
     this.ParentPath = "";
   }
@@ -71,14 +73,31 @@ export default class FileManager extends Component {
     this.props.SendToWs({ Path: this.ParentPath }, 11);
   }
 
+  doAction(actionName) {
+    switch (actionName) {
+      case "mkdir":
+        //pass
+        break;
+      case "back":
+        this.props.SendToWs({ Path: this.ParentPath }, 11);
+        break;
+      default:
+        break;
+    }
+  }
+
   render() {
     return (
       this.dataloaded && (
         <div>
           <Navbar className="fm-nav">
-            <FmHead back={this.back} path={this.Path} />
+            <FmHead path={this.Path} doaction={this.doAction} />
           </Navbar>
-          <FmBody files={this.state.fileslist} listDir={this.listDir} />
+          <FmBody
+            files={this.state.fileslist}
+            listDir={this.listDir}
+            path={this.Path}
+          />
         </div>
       )
     );

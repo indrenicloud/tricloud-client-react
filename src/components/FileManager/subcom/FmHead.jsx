@@ -32,7 +32,10 @@ export default class FmHead extends Component {
     return (
       <Container fluid>
         <div className="navarrow-cont">
-          <button className="navarrow" onClick={this.props.back}>
+          <button
+            className="navarrow"
+            onClick={e => this.props.doaction("back")}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="48"
