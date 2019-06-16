@@ -69,8 +69,15 @@ class Users extends Component {
   }
 
   handleDelete(prop, key) {
-    api.deleteData("/api/users/" + prop.id).then(result => {
-      console.log(result);
+    api.deleteData("/api/users/" + prop.id).then(resp => {
+      console.log(resp);
+      if (resp.status == "ok") {
+        const msg = "User " + prop.id + " has been deleted successfully !";
+        this.props.notify(msg, "success");
+        this.getAllUsers();
+      } else {
+        this.props.notify("User " + prop.id + " delete action failed !", "warning");
+      }
     });
   }
   render() {
@@ -148,7 +155,9 @@ class Users extends Component {
                                 <Link to={`/users/` + prop.id}>
                                   <i className="col nc-icon nc-button-play text-success" />
                                 </Link>
-                                <i className="col nc-icon nc-simple-remove text-danger deleteagent" onClick={() => this.handleDelete(prop, key)} />
+                                <Link to="#">
+                                  <i className="col nc-icon nc-simple-remove text-danger deleteagent" onClick={() => this.handleDelete(prop, key)} />
+                                </Link>
                               </div>
                             </td>
                           </tr>
