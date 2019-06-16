@@ -1,20 +1,11 @@
 import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col
-} from "reactstrap";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col } from "reactstrap";
 import withAuth from "components/Login/withAuth";
 import { thead } from "variables/agents";
 import Api from "service/Api";
 import "./Agents.css";
 import { Link } from "react-router-dom";
 import NotificationAlert from "react-notification-alert";
-import { messaging } from "../../init-fcm";
 const api = new Api();
 class Agents extends Component {
   constructor(props) {
@@ -32,19 +23,6 @@ class Agents extends Component {
 
   componentDidMount() {
     this.getAgents();
-    messaging
-      .requestPermission()
-      .then(async function() {
-        const token = await messaging.getToken();
-        console.log(token);
-      })
-      .catch(function(err) {
-        console.log("Unable to get permission to notify.", err);
-      });
-
-    navigator.serviceWorker.addEventListener("message", message =>
-      console.log(message)
-    );
   }
   componentDidUpdate() {
     // this.getAgents();
@@ -60,14 +38,7 @@ class Agents extends Component {
       if (result.data.length > 0) {
         result.data.map(function(key) {
           const info = {
-            data: [
-              key.id,
-              key.systeminfo.os,
-              key.systeminfo.hostname,
-              key.owner,
-              key.systeminfo.platform + " " + key.systeminfo.platformVersion,
-              key.active ? "Active" : "Inactive"
-            ]
+            data: [key.id, key.systeminfo.os, key.systeminfo.hostname, key.owner, key.systeminfo.platform + " " + key.systeminfo.platformVersion, key.active ? "Active" : "Inactive"]
           };
           agentsinfos.push(info);
         });
@@ -171,17 +142,12 @@ class Agents extends Component {
                                 </Link>
                               </div>
                               <div className="col action">
-                                <Link
-                                  to={`/agents/` + prop.data[0] + `/stats/`}
-                                >
+                                <Link to={`/agents/` + prop.data[0] + `/stats/`}>
                                   <i className="nc-icon nc-sound-wave text-warning" />
                                 </Link>
                               </div>
                               <div className="col action">
-                                <i
-                                  className="nc-icon nc-simple-remove text-danger deletelist"
-                                  onClick={() => this.handleDelete(prop, key)}
-                                />
+                                <i className="nc-icon nc-simple-remove text-danger deletelist" onClick={() => this.handleDelete(prop, key)} />
                               </div>
                             </div>
                           </td>

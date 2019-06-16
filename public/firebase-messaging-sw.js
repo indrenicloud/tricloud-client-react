@@ -9,6 +9,8 @@ var config = {
 firebase.initializeApp(config);
 const messaging = firebase.messaging();
 
+
+
 messaging.setBackgroundMessageHandler(payload => {
    const title = payload.notification.title;
    console.log('payload', payload.notification.icon);

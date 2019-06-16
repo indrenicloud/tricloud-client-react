@@ -10,6 +10,8 @@ import AgentDetail from "views/AgentDetail/AgentDetail";
 import AgentStats from "views/AgentStats/AgentStats";
 import dashboardRoutes from "routes/dashboard.jsx";
 import UserProfile from "../../views/UserProfile/UserProfile";
+import { messaging } from "../../init-fcm";
+import NotificationAlert from "react-notification-alert";
 
 var ps;
 
@@ -20,12 +22,58 @@ class Dashboard extends React.Component {
       backgroundColor: "black",
       activeColor: "info"
     };
+    this.alert = this.alert.bind(this);
+  }
+
+  alert(type, msg) {
+    var options = {
+      place: "tr",
+      message: (
+        <div>
+          <div>{msg}</div>
+        </div>
+      ),
+      type: type,
+      icon: "nc-icon nc-bell-55",
+      autoDismiss: 7
+    };
+    this.refs.notificationAlert.notificationAlert(options);
   }
   componentDidMount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.refs.mainPanel);
       document.body.classList.toggle("perfect-scrollbar-on");
     }
+    messaging
+      .requestPermission()
+      .then(async function() {
+        const token = await messaging.getToken();
+        console.log(token);
+      })
+      .catch(function(err) {
+        console.log("Unable to get permission to notify.", err);
+      });
+
+    navigator.serviceWorker.addEventListener("message", message => {
+      messaging.onMessage(payload => {
+        console.log(payload);
+
+        const body = payload.notification.body;
+        const body_json = JSON.parse(body);
+        const agentid = body_json.Agentid;
+        const timestamp = body_json.Timestamp;
+        const event = body_json.Events[0];
+        const event_type = event.Type;
+        const event_msg = event.Message;
+        const title = event_type;
+        const msg = title + "\n" + event_msg + "\n" + agentid + +"\n" + new Date(timestamp);
+        var msg_type = "danger";
+
+        this.alert(msg_type, msg);
+      });
+      // console.log(message.data.firebase-messaging-msg-data.data.body);
+      // this.alert(message.data.firebase-message.);
+    });
   }
   componentWillUnmount() {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -48,6 +96,7 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div className="wrapper">
+        <NotificationAlert ref="notificationAlert" />;
         <Sidebar {...this.props} routes={dashboardRoutes} bgColor={this.state.backgroundColor} activeColor={this.state.activeColor} />
         <div className="main-panel" ref="mainPanel">
           <Header {...this.props} />
