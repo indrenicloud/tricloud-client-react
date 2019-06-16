@@ -28,11 +28,7 @@ class Dashboard extends React.Component {
   alert(type, msg) {
     var options = {
       place: "tr",
-      message: (
-        <div>
-          <div>{msg}</div>
-        </div>
-      ),
+      message: msg,
       type: type,
       icon: "nc-icon nc-bell-55",
       autoDismiss: 7
@@ -57,22 +53,31 @@ class Dashboard extends React.Component {
     navigator.serviceWorker.addEventListener("message", message => {
       messaging.onMessage(payload => {
         console.log(payload);
-
-        const body = payload.notification.body;
-        const body_json = JSON.parse(body);
-        const agentid = body_json.Agentid;
-        const timestamp = body_json.Timestamp;
-        const event = body_json.Events[0];
-        const event_type = event.Type;
+        const body = JSON.parse(payload.notification.body);
+        const agentid = body.Agentid;
+        const timestamp = body.Timestamp;
+        const event = body.Events[0];
+        const title = event.Type;
         const event_msg = event.Message;
-        const title = event_type;
-        const msg = title + "\n" + event_msg + "\n" + agentid + +"\n" + new Date(timestamp);
-        var msg_type = "danger";
+        const msg = (
+          <div>
+            <h6>{title}</h6>
+            <div>
+              <p>
+                <strong>AgentID:</strong> {agentid}
+                <br />
+                <strong>Remarks :</strong> {event_msg}
+                <br />
+                <strong>TimeStamp:</strong>
+                {timestamp}
+              </p>
+            </div>
+          </div>
+        );
 
+        var msg_type = "danger";
         this.alert(msg_type, msg);
       });
-      // console.log(message.data.firebase-messaging-msg-data.data.body);
-      // this.alert(message.data.firebase-message.);
     });
   }
   componentWillUnmount() {
