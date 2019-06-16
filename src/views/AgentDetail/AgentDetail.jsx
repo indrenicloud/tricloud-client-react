@@ -122,6 +122,7 @@ class AgentDetail extends Component {
           if (_func != null) {
             _func(body);
           }
+          console.log("CMD_TASK", body);
           break;
         case CMD_FM_LISTDIR:
           console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
@@ -416,17 +417,7 @@ class AgentDetail extends Component {
                   </Col>
                 </Row>
               </CardBody>
-              <CardFooter>
-                <button
-                  onClick={event => {
-                    console.log(event);
-                    let out = encodeMsg({ Interval: 5, Timeout: 200 }, this.connid, CMD_TASKMGR, 1);
-                    this.websocketRef.current.sendMessage(out);
-                  }}
-                >
-                  Show Processes
-                </button>
-              </CardFooter>
+              <CardFooter />
             </Card>
           </Col>
         </Row>

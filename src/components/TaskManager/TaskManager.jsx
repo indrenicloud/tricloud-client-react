@@ -13,19 +13,25 @@ export default class TaskManager extends Component {
     this.killProcess = this.killProcess.bind(this);
   }
 
+  componentDidMount() {
+    // if (!this.dataloaded) {
+    //   this.props.updateTerminal();
+    // }
+  }
+
   getFilteredProcesses = () =>
     this.state.termdata.filter(element => {
       if (element["UpTime"] == 0 || element["MEM"] == 0) return false;
       else return true;
     });
 
-  updateTerminal = data => {
-    console.log(data);
+  updateTerminal(data) {
+    console.log("term---------------", data);
     this.dataloaded = true;
     this.setState({
       termdata: data.Processes
     });
-  };
+  }
 
   killProcess(key) {
     this.props.sendtoTaskmgr(key, "kill");
