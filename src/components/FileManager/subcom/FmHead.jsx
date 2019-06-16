@@ -32,7 +32,7 @@ export default class FmHead extends Component {
     return (
       <Container fluid>
         <div className="navarrow-cont">
-          <button className="navarrow">
+          <button className="navarrow" onClick={this.props.back}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="48"
@@ -52,6 +52,9 @@ export default class FmHead extends Component {
               <path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z" />
             </svg>
           </button>
+        </div>
+        <div>
+          <input className="form-control" value={this.props.path} />
         </div>
         <div>
           <button class="navarrow" title="Create folder">

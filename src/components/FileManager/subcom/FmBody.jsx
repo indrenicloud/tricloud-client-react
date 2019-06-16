@@ -41,13 +41,20 @@ class FmBody extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.files.map(file => (
-              <tr>
-                <th>{file.Name}</th>
-                <th>{file.Size}</th>
-                <th>{file.Type}</th>
-              </tr>
-            ))}
+            {this.props.files
+              .filter(f => {
+                if (f.Name.startsWith(".")) {
+                  return false;
+                }
+                return true;
+              })
+              .map(file => (
+                <tr onClick={e => this.props.listDir(file.Name)}>
+                  <th>{file.Name}</th>
+                  <th>{file.Size}</th>
+                  <th>{file.Type}</th>
+                </tr>
+              ))}
             ;
           </tbody>
         </table>
