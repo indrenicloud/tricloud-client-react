@@ -34,8 +34,8 @@ export default class TaskManager extends Component {
     });
   }
 
-  killProcess(key) {
-    this.props.sendtoTaskmgr(key, "kill");
+  killProcess(pid) {
+    this.props.SendToWs({ PID: pid, Action: "kill" }, 4);
   }
 
   render() {
