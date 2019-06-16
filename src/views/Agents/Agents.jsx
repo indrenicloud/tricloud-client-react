@@ -5,7 +5,7 @@ import { thead } from "variables/agents";
 import Api from "service/Api";
 import "./Agents.css";
 import { Link } from "react-router-dom";
-import NotificationAlert from "react-notification-alert";
+
 const api = new Api();
 class Agents extends Component {
   constructor(props) {
@@ -17,8 +17,6 @@ class Agents extends Component {
       agentsempty: true
     };
     this.handleDelete = this.handleDelete.bind(this);
-    this.notify = this.notify.bind(this);
-    this.getAgents = this.getAgents.bind(this);
   }
 
   componentDidMount() {
@@ -67,7 +65,7 @@ class Agents extends Component {
     api.deleteData("/api/agents/" + agentID).then(result => {
       if (result.status === "ok") {
         console.log(result.status);
-        this.notify("tr", "Successfully delete agent " + agentID);
+        this.props.notify("Successfully delete agent " + agentID);
       }
       var agentsinfo = this.state.agentsinfo;
       delete agentsinfo[key];
@@ -75,24 +73,6 @@ class Agents extends Component {
         agentsinfo: agentsinfo
       });
     });
-  }
-
-  onDismiss() {}
-  notify(place, msg) {
-    var type = "success";
-
-    var options = {
-      place: place,
-      message: (
-        <div>
-          <div>{msg}</div>
-        </div>
-      ),
-      type: type,
-      icon: "nc-icon nc-bell-55",
-      autoDismiss: 7
-    };
-    this.refs.notificationAlert.notificationAlert(options);
   }
   render() {
     let emptyinfo;
@@ -105,7 +85,6 @@ class Agents extends Component {
     }
     return (
       <div className="content">
-        <NotificationAlert ref="notificationAlert" />
         <Row>
           <Col xs={12}>
             <Card>
@@ -147,7 +126,9 @@ class Agents extends Component {
                                 </Link>
                               </div>
                               <div className="col action">
-                                <i className="nc-icon nc-simple-remove text-danger deletelist" onClick={() => this.handleDelete(prop, key)} />
+                                <Link to="#">
+                                  <i className="nc-icon nc-simple-remove text-danger deletelist" onClick={() => this.handleDelete(prop, key)} />
+                                </Link>
                               </div>
                             </div>
                           </td>

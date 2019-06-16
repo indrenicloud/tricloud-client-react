@@ -23,9 +23,22 @@ class Dashboard extends React.Component {
       activeColor: "info"
     };
     this.alert = this.alert.bind(this);
+    this.notify = this.notify.bind(this);
   }
 
   alert(type, msg) {
+    var options = {
+      place: "tr",
+      message: msg,
+      type: type,
+      icon: "nc-icon nc-bell-55",
+      autoDismiss: 7
+    };
+    this.refs.notificationAlert.notificationAlert(options);
+  }
+  notify(msg, ...type) {
+    var type = type[0] || "success";
+
     var options = {
       place: "tr",
       message: msg,
@@ -106,17 +119,17 @@ class Dashboard extends React.Component {
         <div className="main-panel" ref="mainPanel">
           <Header {...this.props} />
           <Switch>
-            <Route path="/agents/:agentId/stats/" component={AgentStats} />
+            <Route path="/agents/:agentId/stats/" render={props => <AgentStats {...props} notify={this.notify} />} />
 
-            <Route path="/agents/:agentId" component={AgentDetail} />
-            <Route path="/users/:userId" component={UserProfile} />
+            <Route path="/agents/:agentId" render={props => <AgentDetail {...props} notify={this.notify} />} />
+            <Route path="/users/:userId" render={props => <UserProfile {...props} notify={this.notify} />} />
 
             {dashboardRoutes.map((prop, key) => {
               if (prop.redirect) {
                 return <Redirect from={prop.path} to={prop.pathTo} key={key} />;
               }
 
-              return <Route path={prop.path} component={prop.component} key={key} />;
+              return <Route path={prop.path} render={props => <prop.component {...props} notify={this.notify} />} key={key} />;
             })}
           </Switch>
 
