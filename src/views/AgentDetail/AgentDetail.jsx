@@ -200,8 +200,16 @@ class AgentDetail extends Component {
     this.websocketRef.current.sendMessage(out);
   }
 
-  rebootAgent() {}
-  shutdownAgent() {}
+  rebootAgent() {
+    if (this.websocketRef.current != null) {
+      this.SendToWs({ Action: "reboot" }, 13);
+    }
+  }
+  shutdownAgent() {
+    if (this.websocketRef.current != null) {
+      this.SendToWs({ Action: "shutdown" }, 13);
+    }
+  }
   render() {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
       if (key === "firstadded" || key === "lastlogin") {
@@ -258,8 +266,9 @@ class AgentDetail extends Component {
                     <h3 className={"card-title agent_info_title"}>Agent Info</h3>
                     <div id="agentinfo">{agentinfo}</div>
                     <div>
-                      <button onClick={this.rebootAgent()}>Reboot</button>
-                      <button onClick={this.shutdownAgent()}>Shutdown</button>
+                      <img onClick={this.rebootAgent()} alt="Reboot" title="Reboot" src="https://img.icons8.com/color/96/000000/restart.png" />
+
+                      <img onClick={this.shutdownAgent()} alt="Shutdown" title="Shutdown" src="https://img.icons8.com/color/96/000000/shutdown.png" />
                     </div>
                   </Col>
                 </Row>
