@@ -3,6 +3,7 @@ import Agents from "views/Agents/Agents.jsx";
 import Settings from "views/Settings/Settings.jsx";
 import Logout from "../components/Logout/Logout";
 import Users from "../views/Users/Users";
+import AlertsPage from "../views/AlertsPage/AlertsPage";
 
 var dashRoutes = [
   // {
@@ -28,7 +29,7 @@ var dashRoutes = [
     path: "/alerts",
     name: "Alerts",
     icon: "nc-icon nc-alert-circle-i",
-    component: ""
+    component: AlertsPage
   },
   {
     path: "/settings",
