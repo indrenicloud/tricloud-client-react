@@ -127,6 +127,9 @@ class AgentDetail extends Component {
           console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
           this.FileManagerRef.current.inData(body);
           break;
+        case 12:
+          this.FileManagerRef.current.actionDone(body);
+          break;
         default:
           console.log("Not implemented");
           break;
