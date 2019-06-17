@@ -4,6 +4,8 @@ import Settings from "views/Settings/Settings.jsx";
 import Logout from "../components/Logout/Logout";
 import Users from "../views/Users/Users";
 import AlertsPage from "../views/AlertsPage/AlertsPage";
+import Automation from "../views/Automation/Automation";
+import WebMonitor from "../views/WebMonitor/WebMonitor";
 
 var dashRoutes = [
   // {
@@ -20,16 +22,28 @@ var dashRoutes = [
   },
 
   {
-    path: "/users",
-    name: "Users",
-    icon: "nc-icon nc-single-02",
-    component: Users
-  },
-  {
     path: "/alerts",
     name: "Alerts",
     icon: "nc-icon nc-alert-circle-i",
     component: AlertsPage
+  },
+  {
+    path: "/web-monitor",
+    name: "Web Monitoring",
+    icon: "nc-icon nc-world-2",
+    component: WebMonitor
+  },
+  {
+    path: "/automation",
+    name: "Automation",
+    icon: "nc-icon nc-spaceship",
+    component: Automation
+  },
+  {
+    path: "/users",
+    name: "Users",
+    icon: "nc-icon nc-single-02",
+    component: Users
   },
   {
     path: "/settings",
