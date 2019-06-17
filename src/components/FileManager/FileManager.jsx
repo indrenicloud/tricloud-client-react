@@ -12,6 +12,10 @@ import {
   Row,
   Col,
   Collapse,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
   Navbar,
   NavbarToggler,
   NavbarBrand,
@@ -40,9 +44,13 @@ export default class FileManager extends Component {
     this.listDir = this.listDir.bind(this);
     this.back = this.back.bind(this);
     this.doAction = this.doAction.bind(this);
+    this.actionDone = this.actionDone.bind(this);
+    this.refresh = this.refresh.bind(this);
     this.FmBodyRef = createRef();
     this.Path = ".";
     this.ParentPath = "";
+    this.pendingRename = {};
+    this.newRename_name = "";
   }
 
   inData(data) {
@@ -55,14 +63,24 @@ export default class FileManager extends Component {
     }
 
     this.setState({
-      fileslist: files
+      fileslist: files,
+      showRename: false
     });
   }
 
   componentDidUpdate() {
     if (!this.dataloaded) {
-      this.props.SendToWs({ Path: "." }, 11);
+      this.refresh();
     }
+  }
+
+  actionDone(body) {
+    console.log(body);
+    this.refresh();
+  }
+
+  refresh() {
+    this.props.SendToWs({ Path: this.Path }, 11);
   }
 
   listDir(dname) {
@@ -86,13 +104,13 @@ export default class FileManager extends Component {
           console.log("cannot rename multiple element at once");
           return;
         }
-        return;
-        out = {
+
+        this.pendingRename = {
           Action: actionName,
           Basepath: this.Path,
           Targets: selected
         };
-        this.props.SendToWs(out, 12);
+        this.setState({ showRename: true });
         break;
       case "back":
         this.props.SendToWs({ Path: this.ParentPath }, 11);
@@ -117,6 +135,37 @@ export default class FileManager extends Component {
           <Navbar className="fm-nav">
             <FmHead path={this.Path} doaction={this.doAction} />
           </Navbar>
+          <Modal
+            isOpen={this.state.showRename}
+            toggle={() => {
+              this.setState(prevState => ({
+                showRename: !prevState.showRename
+              }));
+            }}
+          >
+            <ModalHeader>Rename</ModalHeader>
+            <ModalBody>
+              <input
+                onInput={e => {
+                  this.newRename_name = e.target.value;
+                }}
+              />
+            </ModalBody>
+
+            <ModalFooter>
+              <button
+                onClick={() => {
+                  this.setState(prevState => ({
+                    showRename: !prevState.showRename
+                  }));
+                  this.pendingRename.Destination = this.newRename_name;
+                  this.props.SendToWs(this.pendingRename, 12);
+                }}
+              >
+                Rename
+              </button>
+            </ModalFooter>
+          </Modal>
           <FmBody
             files={this.state.fileslist}
             listDir={this.listDir}
