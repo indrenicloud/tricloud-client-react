@@ -1,5 +1,5 @@
 import React, { Component, createRef } from "react";
-
+//import streamSaver from 'StreamSaver'
 import FmHead from "./subcom/FmHead";
 import FmBody from "./subcom/FmBody";
 
@@ -27,6 +27,7 @@ export default class FileManager extends Component {
     this.refresh = this.refresh.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
     this.FmBodyRef = createRef();
+    this.fileStream = null;
     this.Path = ".";
     this.ParentPath = "";
     this.pendingRename = {};
@@ -118,12 +119,13 @@ export default class FileManager extends Component {
       return;
     }
     let fPath = this.Path + "/" + selected[0];
-
+    //this.fileStream = streamSaver.createWriteStream(
+     // selected[0], {})
+     //let writer = this.fileStream.getWriter()
+     //writer.write("hello");
     this.props.SendToWs(
       { Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE },
-      CMD_START_SERVICE
-    );
-  }
+      CMD_START_SERVICE);}
 
   render() {
     return (
