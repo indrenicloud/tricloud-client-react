@@ -15,7 +15,7 @@ import "./AgentDetail.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import MemDonut from "components/MemDonut/MemDonut";
-import { parsePacket, encodeMsg, CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_FM_LISTDIR, CMD_TASKMGR, formatBytes, CMD_EVENTS } from "../../service/utility";
+import { parsePacket, encodeMsg, CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_FM_LISTDIR, CMD_TASKMGR, formatBytes, CMD_EVENTS, CMD_DOWNLOAD_SERVICE, CMD_FM_ACTION } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
 import FileManager from "../../components/FileManager/FileManager";
 
@@ -127,8 +127,8 @@ class AgentDetail extends Component {
           console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
           this.FileManagerRef.current.inData(body);
           break;
-        case 12:
-          this.FileManagerRef.current.actionDone(body);
+        case CMD_DOWNLOAD_SERVICE,CMD_FM_ACTION:
+          this.FileManagerRef.current.actionDone(head,body);
           break;
         default:
           console.log("Not implemented");

@@ -10,8 +10,12 @@ export const CMD_GCM_TOKEN = 8;
 export const CMD_AGENTSBROADCAST = 9;
 export const CMD_EVENTS = 10;
 export const CMD_FM_LISTDIR = 11;
-export const CMD_SYSTEM_ACTION = 12;
-export const CMD_BUILTIN_MAX = 13;
+export const CMD_FM_ACTION = 12;
+export const CMD_SYSTEM_ACTION = 13;
+export const CMD_START_SERVICE = 14;
+export const CMD_DOWNLOAD_SERVICE = 15;
+export const CMD_UPLOAD_SERVICE = 16;
+export const CMD_BUILTIN_MAX = 17;
 
 export function parsePacket(arrbuf) {
   //let ubuff = new Uint8Array(data);
@@ -21,16 +25,45 @@ export function parsePacket(arrbuf) {
   let connid = headerdataview.getUint16(0);
   let cmdtype = headerdataview.getUint8(2);
   let flow = headerdataview.getUint8(3);
+  let header = {
+    connid: connid,
+    flow: flow,
+    cmdtype: cmdtype
+  };
 
+  let bodybuff;
   //string/json
   var response;
-  let bodybuff = arrbuf.slice(0, offset);
+
+  console.log("Cmdtype :", cmdtype);
+
+  if (cmdtype == CMD_DOWNLOAD_SERVICE) {
+    let eheadbuff = arrbuf.slice(offset - 10, offset);
+    let eheaddv = new DataView(eheadbuff,0);
+    console.log(eheaddv);
+    let eoffset = 0;//eheaddv.getBigInt64(0, false);
+    let eflag = eheaddv.getUint8(8);
+    let eid = eheaddv.getUint8(9);
+    header.ehead = { eoffset: eoffset, eflag: eflag, eid: eid };
+    bodybuff = arrbuf.slice(0, offset - 10);
+
+  if ("TextDecoder" in window) {
+    let _tdv = new DataView(bodybuff);
+    var decoder = new TextDecoder("utf-8");
+    let rawstr = decoder.decode(_tdv);
+    header.rawstr = rawstr;
+    }
+    
+    return [header, bodybuff];
+  }
+
+  bodybuff = arrbuf.slice(0, offset);
   let bodydataview = new DataView(bodybuff);
 
   if ("TextDecoder" in window) {
     var decoder = new TextDecoder("utf-8");
     let rawstr = decoder.decode(bodydataview);
-    console.log("RAWSTR:", rawstr);
+    //console.log("RAWSTR:", rawstr);
     response = JSON.parse(rawstr);
   } else {
     console.log("OLD BROWSER");
@@ -40,11 +73,6 @@ export function parsePacket(arrbuf) {
     );
     response = JSON.parse(decodedString);
   }
-  let header = {
-    connid: connid,
-    flow: flow,
-    cmdtype: cmdtype
-  };
 
   return [header, response];
 }

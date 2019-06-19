@@ -1,37 +1,16 @@
-import React, { Component, Fragment, createRef } from "react";
+import React, { Component, createRef } from "react";
 
 import FmHead from "./subcom/FmHead";
 import FmBody from "./subcom/FmBody";
 
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col,
-  Collapse,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Container,
-  InputGroup,
-  InputGroupText,
-  InputGroupAddon,
-  Input
-} from "reactstrap";
+import { Modal, ModalBody, ModalHeader, ModalFooter, Navbar } from "reactstrap";
 import "./FileManager.css";
+import {
+  CMD_FM_ACTION,
+  CMD_FM_LISTDIR,
+  CMD_START_SERVICE,
+  CMD_DOWNLOAD_SERVICE
+} from "../../service/utility";
 
 export default class FileManager extends Component {
   constructor(props) {
@@ -46,6 +25,7 @@ export default class FileManager extends Component {
     this.doAction = this.doAction.bind(this);
     this.actionDone = this.actionDone.bind(this);
     this.refresh = this.refresh.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
     this.FmBodyRef = createRef();
     this.Path = ".";
     this.ParentPath = "";
@@ -74,21 +54,21 @@ export default class FileManager extends Component {
     }
   }
 
-  actionDone(body) {
+  actionDone(head, body) {
     console.log(body);
     this.refresh();
   }
 
   refresh() {
-    this.props.SendToWs({ Path: this.Path }, 11);
+    this.props.SendToWs({ Path: this.Path }, CMD_FM_LISTDIR);
   }
 
   listDir(dname) {
     let path = this.Path + "/" + dname;
-    this.props.SendToWs({ Path: path }, 11);
+    this.props.SendToWs({ Path: path }, CMD_FM_LISTDIR);
   }
   back() {
-    this.props.SendToWs({ Path: this.ParentPath }, 11);
+    this.props.SendToWs({ Path: this.ParentPath }, CMD_FM_LISTDIR);
   }
 
   doAction(actionName) {
@@ -113,7 +93,7 @@ export default class FileManager extends Component {
         this.setState({ showRename: true });
         break;
       case "back":
-        this.props.SendToWs({ Path: this.ParentPath }, 11);
+        this.props.SendToWs({ Path: this.ParentPath }, CMD_FM_LISTDIR);
         break;
       case "delete":
         out = {
@@ -121,11 +101,28 @@ export default class FileManager extends Component {
           Basepath: this.Path,
           Targets: selected
         };
-        this.props.SendToWs(out, 12);
+        this.props.SendToWs(out, CMD_FM_ACTION);
+        break;
+      case "download":
+        this.downloadFile(selected);
         break;
       default:
         break;
     }
+  }
+
+  /* Action methods */
+  downloadFile(selected) {
+    if (selected.length > 1) {
+      console.log("multiple file selected, supports only one");
+      return;
+    }
+    let fPath = this.Path + "/" + selected[0];
+
+    this.props.SendToWs(
+      { Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE },
+      CMD_START_SERVICE
+    );
   }
 
   render() {

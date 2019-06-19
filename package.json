@@ -27,6 +27,7 @@
     "react-scripts": "2.0.4",
     "react-websocket": "^2.0.1",
     "reactstrap": "6.5.0",
+    "streamsaver": "^2.0.3",
     "xterm": "^3.12.2"
   },
   "scripts": {
