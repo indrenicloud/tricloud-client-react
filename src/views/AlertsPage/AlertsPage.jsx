@@ -8,8 +8,10 @@ const api = new Api();
 class AlertsPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
-    this.userid = this.props.match.params.userId;
+    this.state = {
+      alerts: []
+    };
+    this.userid = this.props.user.u;
     this.getAlerts = this.getAlerts.bind(this);
   }
 
@@ -17,8 +19,17 @@ class AlertsPage extends Component {
     this.getAlerts();
   }
   getAlerts() {
-    api.getData("/users/" + this.userid + "/alerts").then(resp => {
-      console.log(resp.data);
+    api.getData("/api/users/" + this.userid + "/alerts").then(resp => {
+      const alerts = resp.data;
+      console.log(alerts);
+      var alerts_data = [];
+      alerts.map(prop => {
+        prop = JSON.parse(prop);
+        alerts_data.push(prop);
+      });
+      this.setState({
+        alerts: alerts_data
+      });
     });
   }
 
@@ -28,7 +39,7 @@ class AlertsPage extends Component {
         <div className="content">
           <Modal isOpen={this.state.modal} toggle={this.toggle}>
             <form>
-              <ModalHeader>Add New User</ModalHeader>
+              <ModalHeader />
               <ModalBody />
               <ModalFooter />
             </form>
@@ -47,27 +58,20 @@ class AlertsPage extends Component {
                         <th>Type</th>
                         <th>Remarks</th>
                         <th>TimeStamp</th>
-                        <th>Actions</th>
                       </tr>
                     </thead>
-                    <tbody>{/* {this.state.all_users.map((prop, key) => {
+                    <tbody>
+                      {this.state.alerts.map((prop, key) => {
                         return (
                           <tr>
-                            <td>{prop.fullname}</td>
-                            <td>{prop.email}</td>
-                            <td>{prop.id}</td>
-                            <td>{prop.superuser == true ? "Admin" : "Normal"}</td>
-                            <td>
-                              <div className="row">
-                                <Link to={`/users/` + prop.id}>
-                                  <i className="col nc-icon nc-button-play text-success" />
-                                </Link>
-                                <i className="col nc-icon nc-simple-remove text-danger deleteagent" onClick={() => this.handleDelete(prop, key)} />
-                              </div>
-                            </td>
+                            <td>{prop.Agentid}</td>
+                            <td>{prop.Events[0].Type}</td>
+                            <td>{prop.Events[0].Message}</td>
+                            <td>{prop.Timestamp}</td>
                           </tr>
                         );
-                      })} */}</tbody>
+                      })}
+                    </tbody>
                   </Table>
                 </CardBody>
               </Card>
