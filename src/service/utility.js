@@ -40,7 +40,10 @@ export function parsePacket(arrbuf) {
   if (cmdtype == CMD_DOWNLOAD_SERVICE) {
     let eheadbuff = arrbuf.slice(offset - 10, offset);
     let eheaddv = new DataView(eheadbuff,0);
+
     console.log(eheaddv);
+  
+
     let eoffset = 0;//eheaddv.getBigInt64(0, false);
     let eflag = eheaddv.getUint8(8);
     let eid = eheaddv.getUint8(9);
@@ -64,6 +67,7 @@ export function parsePacket(arrbuf) {
     var decoder = new TextDecoder("utf-8");
     let rawstr = decoder.decode(bodydataview);
     //console.log("RAWSTR:", rawstr);
+    
     response = JSON.parse(rawstr);
   } else {
     console.log("OLD BROWSER");
@@ -97,6 +101,9 @@ export function encodeMsg(msgstr, connid, cmdtype, flowtype) {
 
   return combined.buffer;
 }
+
+
+
 
 export function formatBytes(a, label) {
   if (0 === a) return "0 Bytes";

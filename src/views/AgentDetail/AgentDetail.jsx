@@ -73,7 +73,7 @@ class AgentDetail extends Component {
     myReader.addEventListener("loadend", e => {
       let [head, body] = parsePacket(e.srcElement.result);
 
-      console.log(head, body);
+      // console.log(head, body);
 
       if (head.cmdtype == CMD_PROCESS_ACTION) {
         console.log("SOMETHING KILLED");
@@ -127,8 +127,9 @@ class AgentDetail extends Component {
           console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
           this.FileManagerRef.current.inData(body);
           break;
-        case CMD_DOWNLOAD_SERVICE,CMD_FM_ACTION:
-          this.FileManagerRef.current.actionDone(head,body);
+        case CMD_DOWNLOAD_SERVICE || CMD_FM_ACTION:
+          console.log("its at downloadervice");
+          this.FileManagerRef.current.actionDone(head, body);
           break;
         default:
           console.log("Not implemented");

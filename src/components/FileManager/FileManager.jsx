@@ -2,15 +2,12 @@ import React, { Component, createRef } from "react";
 //import streamSaver from 'StreamSaver'
 import FmHead from "./subcom/FmHead";
 import FmBody from "./subcom/FmBody";
-
+import { downloadStream } from "service/utility";
 import { Modal, ModalBody, ModalHeader, ModalFooter, Navbar } from "reactstrap";
 import "./FileManager.css";
-import {
-  CMD_FM_ACTION,
-  CMD_FM_LISTDIR,
-  CMD_START_SERVICE,
-  CMD_DOWNLOAD_SERVICE
-} from "../../service/utility";
+
+import { CMD_FM_ACTION, CMD_FM_LISTDIR, CMD_START_SERVICE, CMD_DOWNLOAD_SERVICE } from "../../service/utility";
+const streamSaver = require("streamsaver");
 
 export default class FileManager extends Component {
   constructor(props) {
@@ -119,13 +116,11 @@ export default class FileManager extends Component {
       return;
     }
     let fPath = this.Path + "/" + selected[0];
-    //this.fileStream = streamSaver.createWriteStream(
-     // selected[0], {})
-     //let writer = this.fileStream.getWriter()
-     //writer.write("hello");
-    this.props.SendToWs(
-      { Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE },
-      CMD_START_SERVICE);}
+    const fileStream = streamSaver.createWriteStream(selected[0]);
+    new Response("StreamSaver is beautiful").body.pipeTo(fileStream).then(console.log("success"), console.log("error"));
+
+    this.props.SendToWs({ Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE }, CMD_START_SERVICE);
+  }
 
   render() {
     return (
@@ -165,12 +160,7 @@ export default class FileManager extends Component {
               </button>
             </ModalFooter>
           </Modal>
-          <FmBody
-            files={this.state.fileslist}
-            listDir={this.listDir}
-            path={this.Path}
-            ref={this.FmBodyRef}
-          />
+          <FmBody files={this.state.fileslist} listDir={this.listDir} path={this.Path} ref={this.FmBodyRef} />
         </div>
       )
     );
