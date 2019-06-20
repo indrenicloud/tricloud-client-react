@@ -24,11 +24,13 @@ export default class FileManager extends Component {
     this.refresh = this.refresh.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
     this.FmBodyRef = createRef();
-    this.fileStream = null;
+    //this.fileStream = null;
+    this.swriter = null;
     this.Path = ".";
     this.ParentPath = "";
     this.pendingRename = {};
     this.newRename_name = "";
+    this.tcount = 0;
   }
 
   inData(data) {
@@ -54,6 +56,27 @@ export default class FileManager extends Component {
 
   actionDone(head, body) {
     console.log(body);
+    if (head.cmdtype == CMD_DOWNLOAD_SERVICE){
+      if(!this.swriter) {
+         this.fileStream = streamSaver.createWriteStream("haha", {});
+        if (this.fileStream.locked){
+          console.log("LOCKED")
+          return
+        }
+        this.swriter = this.fileStream.getWriter();
+      }
+      if(this.tcount > 3){
+        if(this.swriter.closed) {
+          return
+        }
+        this.swriter.close()
+        return
+      }
+      this.tcount++;
+
+      this.swriter.write(body)
+    }
+
     this.refresh();
   }
 
@@ -116,8 +139,7 @@ export default class FileManager extends Component {
       return;
     }
     let fPath = this.Path + "/" + selected[0];
-    const fileStream = streamSaver.createWriteStream(selected[0]);
-    new Response("StreamSaver is beautiful").body.pipeTo(fileStream).then(console.log("success"), console.log("error"));
+    //this.fileStream = streamSaver.createWriteStream(selected[0], {});
 
     this.props.SendToWs({ Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE }, CMD_START_SERVICE);
   }
@@ -162,7 +184,6 @@ export default class FileManager extends Component {
           </Modal>
           <FmBody files={this.state.fileslist} listDir={this.listDir} path={this.Path} ref={this.FmBodyRef} />
         </div>
-      )
-    );
+      ));
   }
 }

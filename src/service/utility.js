@@ -41,13 +41,11 @@ export function parsePacket(arrbuf) {
     let eheadbuff = arrbuf.slice(offset - 10, offset);
     let eheaddv = new DataView(eheadbuff,0);
 
-    console.log(eheaddv);
-  
-
     let eoffset = 0;//eheaddv.getBigInt64(0, false);
     let eflag = eheaddv.getUint8(8);
     let eid = eheaddv.getUint8(9);
-    header.ehead = { eoffset: eoffset, eflag: eflag, eid: eid };
+    header.ehead = { eoffset: eoffset, eflag: eflag, eid: eid, Finished:eflag == 9 };
+    console.log(header.ehead);
     bodybuff = arrbuf.slice(0, offset - 10);
 
   if ("TextDecoder" in window) {
