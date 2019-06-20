@@ -25,6 +25,34 @@ import {
 } from "reactstrap";
 import FmHead from "./FmHead";
 
+const FileOrFolder = (f) => {
+  if(f=="dir"){
+    return(
+      <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="36"
+          height="36"
+          viewBox="0 0 48 48"
+          focusable="false"
+          fill= "#4492a7"
+        >
+          <path d="M20 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V16c0-2.21-1.79-4-4-4H24l-4-4z"></path>
+        </svg>
+    )}
+  else{
+    return(
+      <svg xmlns="http://www.w3.org/2000/svg"
+      width="36"
+      height="36"
+      viewBox="0 0 48 48"
+      fill= "#4492a7"
+      focusable="false">
+        <path d="M12 4C9.79 4 8.02 5.79 8.02 8L8 40c0 2.21 1.77 4 3.98 4H36c2.21 0 4-1.79 4-4V16L28 4H12zm14 14V7l11 11H26z"></path>
+      </svg>
+    )
+  }
+  }
+
 class FmBody extends React.Component {
   constructor(props) {
     super(props);
@@ -93,7 +121,9 @@ class FmBody extends React.Component {
                   onClick={e => this.addToSelection(file.Name)}
                   className={this.getClass(file.Name)}
                 >
-                  <th>{file.Name}</th>
+                  <th>
+                    {FileOrFolder(file.Type)}
+                  {file.Name}</th>
                   <th>{file.Size}</th>
                   <th>{file.Type}</th>
                 </tr>
