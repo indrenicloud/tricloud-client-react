@@ -46,13 +46,6 @@ var dashRoutes = [
     component: Users
   },
   {
-    path: "/settings",
-    name: "Settings",
-    icon: "nc-icon nc-settings-gear-65",
-    component: ""
-  },
-
-  {
     pro: true,
     path: "/logout",
     name: "Logout",
