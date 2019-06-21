@@ -12,7 +12,8 @@ export default class FileManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fileslist: [{ Name: ".", Type: ".", Size: "." }]
+      fileslist: [{ Name: ".", Type: ".", Size: "." }],
+      selected: []
     };
     this.dataloaded = false;
     this.inData = this.inData.bind(this);
@@ -28,6 +29,7 @@ export default class FileManager extends Component {
     this.ParentPath = "";
     this.pendingRename = {};
     this.newRename_name = "";
+    this.addtoSelections = this.addtoSelections.bind(this);
   }
 
   inData(data) {
@@ -52,9 +54,9 @@ export default class FileManager extends Component {
   }
 
   actionDone(head, body) {
-    if (head.cmdtype == CMD_DOWNLOAD_SERVICE){
+    if (head.cmdtype == CMD_DOWNLOAD_SERVICE) {
       this.DownloadRef.current.blockIn(head, body);
-    } else{
+    } else {
       this.refresh();
     }
   }
@@ -82,7 +84,7 @@ export default class FileManager extends Component {
       case "rename":
         if (selected.length > 1) {
           console.log("cannot rename multiple element at once");
-          
+
           return;
         }
 
@@ -114,12 +116,15 @@ export default class FileManager extends Component {
 
   /* Action methods */
   downloadFile(selected) {
-    if (this.DownloadRef.current.isRunning()){
+    if (this.DownloadRef.current.isRunning()) {
       console.log("ALREADY another file in process");
+      this.props.notify("Already another file in process !", "warning");
       return;
     }
     if (selected.length > 1) {
       console.log("multiple file selected, supports only one");
+      this.props.notify("multiple file selected, supports only one !", "warning");
+
       return;
     }
     this.DownloadRef.current.initNewDownload(selected[0]);
@@ -127,16 +132,19 @@ export default class FileManager extends Component {
     this.props.SendToWs({ Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE }, CMD_START_SERVICE);
   }
 
+  addtoSelections(array) {
+    this.setState({
+      selected: array
+    });
+  }
+
   render() {
     return (
       this.dataloaded && (
         <div>
           <Navbar className="fm-nav">
-            <FmHead path={this.Path} doaction={this.doAction}>
-              <Download ref={this.DownloadRef} >
-
-              </Download>
-                
+            <FmHead path={this.Path} doaction={this.doAction} selected={this.state.selected}>
+              <Download ref={this.DownloadRef} />
             </FmHead>
           </Navbar>
           <Modal
@@ -170,8 +178,9 @@ export default class FileManager extends Component {
               </button>
             </ModalFooter>
           </Modal>
-          <FmBody files={this.state.fileslist} listDir={this.listDir} path={this.Path} ref={this.FmBodyRef} />
+          <FmBody files={this.state.fileslist} listDir={this.listDir} path={this.Path} ref={this.FmBodyRef} addtoSelections={this.addtoSelections} />
         </div>
-      ));
+      )
+    );
   }
 }

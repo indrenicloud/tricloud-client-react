@@ -1,57 +1,22 @@
 import React from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col,
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Container,
-  InputGroup,
-  InputGroupText,
-  InputGroupAddon,
-  Input
-} from "reactstrap";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col, Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Container, InputGroup, InputGroupText, InputGroupAddon, Input } from "reactstrap";
 import FmHead from "./FmHead";
 
-const FileOrFolder = (f) => {
-  if(f=="dir"){
-    return(
-      <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="36"
-          height="36"
-          viewBox="0 0 48 48"
-          focusable="false"
-          fill= "#4492a7"
-        >
-          <path d="M20 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V16c0-2.21-1.79-4-4-4H24l-4-4z"></path>
-        </svg>
-    )}
-  else{
-    return(
-      <svg xmlns="http://www.w3.org/2000/svg"
-      width="36"
-      height="36"
-      viewBox="0 0 48 48"
-      fill= "#4492a7"
-      focusable="false">
-        <path d="M12 4C9.79 4 8.02 5.79 8.02 8L8 40c0 2.21 1.77 4 3.98 4H36c2.21 0 4-1.79 4-4V16L28 4H12zm14 14V7l11 11H26z"></path>
+const FileOrFolder = f => {
+  if (f == "dir") {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 48 48" focusable="false" fill="#4492a7">
+        <path d="M20 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V16c0-2.21-1.79-4-4-4H24l-4-4z" />
       </svg>
-    )
+    );
+  } else {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 48 48" fill="#4492a7" focusable="false">
+        <path d="M12 4C9.79 4 8.02 5.79 8.02 8L8 40c0 2.21 1.77 4 3.98 4H36c2.21 0 4-1.79 4-4V16L28 4H12zm14 14V7l11 11H26z" />
+      </svg>
+    );
   }
-  }
+};
 
 class FmBody extends React.Component {
   constructor(props) {
@@ -75,6 +40,7 @@ class FmBody extends React.Component {
       newArr.push(filename);
     }
     this.setState({ selections: newArr });
+    this.props.addtoSelections(newArr);
   }
 
   getClass(filename) {
@@ -99,10 +65,10 @@ class FmBody extends React.Component {
   render() {
     return (
       <div>
-        <table className="table table-hover table-striped">
+        <Table responsive className="table-striped">
           <thead>
             <tr>
-              <th scope="col">Title</th>
+              <th scope="col">File Name</th>
               <th scope="col">File size</th>
               <th scope="col">Type</th>
             </tr>
@@ -116,20 +82,17 @@ class FmBody extends React.Component {
                 return true;
               })
               .map(file => (
-                <tr
-                  onDoubleClick={e => this.props.listDir(file.Name)}
-                  onClick={e => this.addToSelection(file.Name)}
-                  className={this.getClass(file.Name)}
-                >
+                <tr onDoubleClick={e => (file.Type === "dir" ? this.props.listDir(file.Name) : "")} onClick={e => this.addToSelection(file.Name)} className={this.getClass(file.Name)}>
                   <th>
                     {FileOrFolder(file.Type)}
-                  {file.Name}</th>
+                    {file.Name}
+                  </th>
                   <th>{file.Size}</th>
                   <th>{file.Type}</th>
                 </tr>
               ))}
           </tbody>
-        </table>
+        </Table>
       </div>
     );
   }

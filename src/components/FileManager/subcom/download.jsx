@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 const streamSaver = require("streamsaver");
 streamSaver.WritableStream = require("web-streams-polyfill/ponyfill").WritableStream;
-
 export default class Download extends Component {
   constructor(props) {
     super(props);
@@ -73,6 +72,6 @@ export default class Download extends Component {
   }
 
   render() {
-    return <div>{"Download"}</div>;
+    return <div>{Download}</div>;
   }
 }

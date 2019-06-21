@@ -407,7 +407,7 @@ class AgentDetail extends Component {
               <CardBody className="fm-cardbody">
                 <Row>
                   <Col>
-                    <FileManager ref={this.FileManagerRef} SendToWs={this.SendToWs} />
+                    <FileManager ref={this.FileManagerRef} SendToWs={this.SendToWs} notify={this.props.notify} />
                   </Col>
                 </Row>
               </CardBody>

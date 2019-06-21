@@ -6,6 +6,7 @@ export default class FmHead extends Component {
   constructor(props) {
     super(props);
   }
+
   render() {
     return (
       <Container fluid>
@@ -14,10 +15,8 @@ export default class FmHead extends Component {
           <Ficon doaction={this.props.doaction} name="back">
             <path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z" />
           </Ficon>
-          <Ficon doaction={this.props.doaction}>
-            <path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z" />
-          </Ficon>
         </div>
+        <div>{this.props.selected.length} items selected</div>
         <div>
           {/* ADDDESS BAR */}
           <input className="form-control" value={this.props.path} />
