@@ -82,6 +82,7 @@ export default class FileManager extends Component {
       case "rename":
         if (selected.length > 1) {
           console.log("cannot rename multiple element at once");
+          
           return;
         }
 
