@@ -35,7 +35,7 @@ export function parsePacket(arrbuf) {
   //string/json
   var response;
 
-  console.log("Cmdtype :", cmdtype);
+  //console.log("Cmdtype :", cmdtype);
 
   if (cmdtype == CMD_DOWNLOAD_SERVICE) {
     let eheadbuff = arrbuf.slice(offset - 10, offset);
@@ -45,7 +45,7 @@ export function parsePacket(arrbuf) {
     let eflag = eheaddv.getUint8(8);
     let eid = eheaddv.getUint8(9);
     header.ehead = { eoffset: eoffset, eflag: eflag, eid: eid, Finished:eflag == 9 };
-    console.log(header.ehead);
+    //console.log(header.ehead);
     bodybuff = arrbuf.slice(0, offset - 10);
 
   if ("TextDecoder" in window) {
@@ -110,7 +110,7 @@ export function formatBytes(a, label) {
     e = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
     f = Math.floor(Math.log(a) / Math.log(c));
   label = !!label;
-  console.log("label", label);
+  //console.log("label", label);
   if (label == true) {
     return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
   } else {

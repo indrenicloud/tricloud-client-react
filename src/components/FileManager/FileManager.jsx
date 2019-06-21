@@ -2,12 +2,11 @@ import React, { Component, createRef } from "react";
 //import streamSaver from 'StreamSaver'
 import FmHead from "./subcom/FmHead";
 import FmBody from "./subcom/FmBody";
-import { downloadStream } from "service/utility";
+import Download from "./subcom/download";
 import { Modal, ModalBody, ModalHeader, ModalFooter, Navbar } from "reactstrap";
 import "./FileManager.css";
 
 import { CMD_FM_ACTION, CMD_FM_LISTDIR, CMD_START_SERVICE, CMD_DOWNLOAD_SERVICE } from "../../service/utility";
-const streamSaver = require("streamsaver");
 
 export default class FileManager extends Component {
   constructor(props) {
@@ -24,13 +23,11 @@ export default class FileManager extends Component {
     this.refresh = this.refresh.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
     this.FmBodyRef = createRef();
-    //this.fileStream = null;
-    this.swriter = null;
+    this.DownloadRef = createRef();
     this.Path = ".";
     this.ParentPath = "";
     this.pendingRename = {};
     this.newRename_name = "";
-    this.tcount = 0;
   }
 
   inData(data) {
@@ -55,29 +52,11 @@ export default class FileManager extends Component {
   }
 
   actionDone(head, body) {
-    console.log(body);
     if (head.cmdtype == CMD_DOWNLOAD_SERVICE){
-      if(!this.swriter) {
-         this.fileStream = streamSaver.createWriteStream("haha", {});
-        if (this.fileStream.locked){
-          console.log("LOCKED")
-          return
-        }
-        this.swriter = this.fileStream.getWriter();
-      }
-      if(this.tcount > 3){
-        if(this.swriter.closed) {
-          return
-        }
-        this.swriter.close()
-        return
-      }
-      this.tcount++;
-
-      this.swriter.write(body)
+      this.DownloadRef.current.blockIn(head, body);
+    } else{
+      this.refresh();
     }
-
-    this.refresh();
   }
 
   refresh() {
@@ -134,13 +113,16 @@ export default class FileManager extends Component {
 
   /* Action methods */
   downloadFile(selected) {
+    if (this.DownloadRef.current.isRunning()){
+      console.log("ALREADY another file in process");
+      return;
+    }
     if (selected.length > 1) {
       console.log("multiple file selected, supports only one");
       return;
     }
+    this.DownloadRef.current.initNewDownload(selected[0]);
     let fPath = this.Path + "/" + selected[0];
-    //this.fileStream = streamSaver.createWriteStream(selected[0], {});
-
     this.props.SendToWs({ Options: [fPath], ServiceType: CMD_DOWNLOAD_SERVICE }, CMD_START_SERVICE);
   }
 
@@ -149,7 +131,12 @@ export default class FileManager extends Component {
       this.dataloaded && (
         <div>
           <Navbar className="fm-nav">
-            <FmHead path={this.Path} doaction={this.doAction} />
+            <FmHead path={this.Path} doaction={this.doAction}>
+              <Download ref={this.DownloadRef} >
+
+              </Download>
+                
+            </FmHead>
           </Navbar>
           <Modal
             isOpen={this.state.showRename}
