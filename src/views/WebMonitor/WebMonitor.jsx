@@ -73,7 +73,6 @@ class WebMonitor extends Component {
 
   render() {
     return (
-      <>
         <div className="content">
           <Modal isOpen={this.state.modal} toggle={this.toggle}>
             <form>
@@ -128,7 +127,9 @@ class WebMonitor extends Component {
                           <tr>
                             <td>{website_name}</td>
                             <td>{prop.url}</td>
-                            <td>{prop.active ? "UP" : "Down"}</td>
+                            <td> <button className={
+                              prop.active ? "btn btn-success" : "btn btn-danger"
+                            }> {prop.active ? "UP" : "Down"} </button></td>
                             <td>{Date(prop.Timestamp)}</td>
 
                             <td>
@@ -151,7 +152,6 @@ class WebMonitor extends Component {
             </Col>
           </Row>
         </div>
-      </>
     );
   }
 }
