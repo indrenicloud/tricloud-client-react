@@ -73,85 +73,86 @@ class WebMonitor extends Component {
 
   render() {
     return (
-        <div className="content">
-          <Modal isOpen={this.state.modal} toggle={this.toggle}>
-            <form>
-              <ModalHeader>Add New Website</ModalHeader>
-              <ModalBody>
-                <div className="row">
-                  <div className="form-group col-md-12">
-                    <label>Name: </label>
-                    <input type="text" name="name" value={this.state.newwebsite.name} onChange={this.onChange} className="form-control" />
-                  </div>
+      <div className="content">
+        <Modal isOpen={this.state.modal} toggle={this.toggle}>
+          <form>
+            <ModalHeader>Add New Website</ModalHeader>
+            <ModalBody>
+              <div className="row">
+                <div className="form-group col-md-12">
+                  <label>Name: </label>
+                  <input type="text" name="name" value={this.state.newwebsite.name} onChange={this.onChange} className="form-control" />
                 </div>
-                <div className="row">
-                  <div className="form-group col-md-12">
-                    <label>URL:</label>
-                    <input type="url" name="url" value={this.state.newwebsite.url} onChange={this.onChange} className="form-control" />
-                  </div>
+              </div>
+              <div className="row">
+                <div className="form-group col-md-12">
+                  <label>URL:</label>
+                  <input type="url" name="url" value={this.state.newwebsite.url} onChange={this.onChange} className="form-control" />
                 </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="primary" onClick={this.handleSubmit}>
-                  Add
-                </Button>{" "}
-                <Button color="secondary" onClick={this.toggle}>
-                  Cancel
-                </Button>
-              </ModalFooter>
-            </form>
-          </Modal>
-          <Row>
-            <Col md="12">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h4">Web Monitoring System</CardTitle>
-                  <i className="col nc-icon nc-simple-add text-success" onClick={this.toggle} />
-                </CardHeader>
-                <CardBody>
-                  <Table responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Name</th>
-                        <th>URL</th>
-                        <th>Status</th>
-                        <th>Last Checked</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" onClick={this.handleSubmit}>
+                Add
+              </Button>{" "}
+              <Button color="secondary" onClick={this.toggle}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </form>
+        </Modal>
+        <Row>
+          <Col md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Web Monitoring System</CardTitle>
+                <i className="col nc-icon nc-simple-add text-success" onClick={this.toggle} />
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Name</th>
+                      <th>URL</th>
+                      <th>Status</th>
+                      <th>Last Checked</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
 
-                    <tbody>
-                      {this.state.websites.map(prop => {
-                        var website_name = prop.name.replace(prop.Subscriber + "_", "");
-                        return (
-                          <tr>
-                            <td>{website_name}</td>
-                            <td>{prop.url}</td>
-                            <td> <button className={
-                              prop.active ? "btn btn-success" : "btn btn-danger"
-                            }> {prop.active ? "UP" : "Down"} </button></td>
-                            <td>{Date(prop.Timestamp)}</td>
+                  <tbody>
+                    {this.state.websites.map(prop => {
+                      var website_name = prop.name.replace(prop.Subscriber + "_", "");
+                      return (
+                        <tr>
+                          <td>{website_name}</td>
+                          <td>{prop.url}</td>
+                          <td>
+                            {" "}
+                            <button className={prop.active ? "btn btn-success" : "btn btn-danger"}> {prop.active ? "UP" : "Down"} </button>
+                          </td>
+                          <td>{Date(prop.Timestamp)}</td>
 
-                            <td>
-                              <div className="row">
-                                <Link to="#">
-                                  <i className="col nc-icon nc-refresh-69 text-success" />
-                                </Link>
-                                <Link to="#">
-                                  <i className="col nc-icon nc-simple-remove text-danger delete-btn" onClick={() => this.handleDelete(prop.name)} />
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </div>
+                          <td>
+                            <div className="row">
+                              <Link to="#">
+                                <i className="col nc-icon nc-refresh-69 text-success" onClick={() => this.getWebsites()} />
+                              </Link>
+                              <Link to="#">
+                                <i className="col nc-icon nc-simple-remove text-danger delete-btn" onClick={() => this.handleDelete(prop.name)} />
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

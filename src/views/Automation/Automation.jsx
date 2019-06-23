@@ -9,25 +9,28 @@ class Automation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      scripts:[]
+      scripts: []
     };
     this.getScripts = this.getScripts.bind(this);
   }
   getScripts() {
     api.getData("/api/scripts").then(resp => {
       console.log(resp.data);
-      this.setState({
-        scripts: resp.data
-      });
+      if (resp.data.length > 0) {
+        this.setState({
+          scripts: resp.data
+        });
+      }
     });
   }
 
   runScripts(name) {
     api.getData("/api/scripts/" + name + "/run").then(resp => {
       console.log(resp.data);
-      this.setState({
-        scripts: resp.data
-      });
+
+      //   this.setState({
+      //     scripts: resp.data
+      //   });
     });
   }
 
@@ -57,23 +60,27 @@ class Automation extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                    {this.state.scripts.map(prop => {
-                        
+                      {this.state.scripts.map(prop => {
                         return (
                           <tr>
                             <td>{prop.name}</td>
                             <td>{prop.platform}</td>
-                            <td>{prop.agent }</td>
+                            <td>{prop.agent}</td>
 
                             <td>
                               <div className="row">
-                                <Link to="#">
+                                {/* <Link to="#">
                                   <i className="col nc-icon nc-refresh-69 text-success" />
-                                </Link>
+                                </Link> */}
                                 <Link to="#">
-                                  <i className="btn btn-primary" onClick={(e) =>{
-                                    this.runScripts(prop.name);
-                                  } } >Run</i>
+                                  <i
+                                    className="btn btn-primary"
+                                    onClick={e => {
+                                      this.runScripts(prop.name);
+                                    }}
+                                  >
+                                    Run
+                                  </i>
                                 </Link>
                               </div>
                             </td>

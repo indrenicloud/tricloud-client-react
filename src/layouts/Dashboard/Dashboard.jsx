@@ -67,29 +67,57 @@ class Dashboard extends React.Component {
       messaging.onMessage(payload => {
         console.log(payload);
         const body = JSON.parse(payload.notification.body);
-        const agentid = body.Agentid;
-        const timestamp = body.Timestamp;
-        const event = body.Events[0];
-        const title = event.Type;
-        const event_msg = event.Message;
-        const msg = (
-          <div>
-            <h6>{title}</h6>
+        if ("url" in body) {
+          const url = body.url;
+          const active = body.active;
+          const timestamp = body.Timestamp;
+          const msg = (
             <div>
-              <p>
-                <strong>AgentID:</strong> {agentid}
-                <br />
-                <strong>Remarks :</strong> {event_msg}
-                <br />
-                <strong>TimeStamp:</strong>
-                {timestamp}
-              </p>
+              <h6>Tricloud Web Monitor</h6>
+              <div>
+                <p>
+                  <strong>Url:</strong> {url}
+                  <br />
+                  <strong>Status :</strong> {active ? "UP" : "DOWN"}
+                  <br />
+                  <strong>TimeStamp:</strong>
+                  {timestamp}
+                </p>
+              </div>
             </div>
-          </div>
-        );
+          );
+          if (active !== true) {
+            var msg_type = "danger";
+          } else {
+            var msg_type = "success";
+          }
+          this.alert(msg_type, msg);
+        } else {
+          const agentid = body.Agentid;
 
-        var msg_type = "danger";
-        this.alert(msg_type, msg);
+          const timestamp = body.Timestamp;
+          const event = body.Events[0];
+          const title = event.Type;
+          const event_msg = event.Message;
+          const msg = (
+            <div>
+              <h6>{title}</h6>
+              <div>
+                <p>
+                  <strong>AgentID:</strong> {agentid}
+                  <br />
+                  <strong>Remarks :</strong> {event_msg}
+                  <br />
+                  <strong>TimeStamp:</strong>
+                  {timestamp}
+                </p>
+              </div>
+            </div>
+          );
+
+          var msg_type = "danger";
+          this.alert(msg_type, msg);
+        }
       });
     });
   }
