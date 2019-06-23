@@ -1,11 +1,30 @@
 import React, { Component } from "react";
 import { Card, CardHeader, CardBody, CardTitle, Table, Row, Col, Modal, ModalBody, ModalHeader, ModalFooter, Button } from "reactstrap";
+import Api from "../../service/Api";
+import { Link } from "react-router-dom";
+import withAuth from "components/Login/withAuth";
 
+const api = new Api();
 class Automation extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      scripts:[]
+    };
+    this.getScripts = this.getScripts.bind(this);
   }
+  getScripts() {
+    api.getData("/api/scripts").then(resp => {
+      console.log(resp.data);
+      this.setState({
+        scripts: resp.data
+      });
+    });
+  }
+  componentDidMount() {
+    this.getScripts();
+  }
+
   render() {
     return (
       <>
@@ -22,12 +41,34 @@ class Automation extends Component {
                     <thead className="text-primary">
                       <tr>
                         <th>Name</th>
-                        <th>Title</th>
                         <th>Platform</th>
+                        <th>Agent</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
-                    <tbody />
+                    <tbody>
+                    {this.state.scripts.map(prop => {
+                        
+                        return (
+                          <tr>
+                            <td>{prop.name}</td>
+                            <td>{prop.platform}</td>
+                            <td>{prop.agent }</td>
+
+                            <td>
+                              <div className="row">
+                                <Link to="#">
+                                  <i className="col nc-icon nc-refresh-69 text-success" />
+                                </Link>
+                                <Link to="#">
+                                  <i className="col nc-icon nc-simple-remove text-danger delete-btn" onClick={() =>{} } />
+                                </Link>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
                   </Table>
                 </CardBody>
               </Card>
