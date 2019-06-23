@@ -21,6 +21,16 @@ class Automation extends Component {
       });
     });
   }
+
+  runScripts(name) {
+    api.getData("/api/scripts/" + name + "/run").then(resp => {
+      console.log(resp.data);
+      this.setState({
+        scripts: resp.data
+      });
+    });
+  }
+
   componentDidMount() {
     this.getScripts();
   }
@@ -61,7 +71,9 @@ class Automation extends Component {
                                   <i className="col nc-icon nc-refresh-69 text-success" />
                                 </Link>
                                 <Link to="#">
-                                  <i className="col nc-icon nc-simple-remove text-danger delete-btn" onClick={() =>{} } />
+                                  <i className="btn btn-primary" onClick={(e) =>{
+                                    this.runScripts(prop.name);
+                                  } } >Run</i>
                                 </Link>
                               </div>
                             </td>
