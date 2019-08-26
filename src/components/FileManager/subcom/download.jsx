@@ -1,6 +1,9 @@
 import React, { Component, Fragment } from "react";
 const streamSaver = require("streamsaver");
 streamSaver.WritableStream = require("web-streams-polyfill/ponyfill").WritableStream;
+
+//import WrapSocket from WrapSocket
+
 export default class Download extends Component {
   constructor(props) {
     super(props);
@@ -58,6 +61,11 @@ export default class Download extends Component {
     next();
   }
   timerFunc() {
+    //start
+    //let ws = new WrapSocket("aa");
+  
+
+    //end
     //console.log("timer called");
     //console.log(this.pendingBlocks );
     //console.log((this.pendingBlocks.length == 0) );
