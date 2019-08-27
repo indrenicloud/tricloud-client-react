@@ -10,7 +10,7 @@ import AgentDetail from "views/AgentDetail/AgentDetail";
 import AgentStats from "views/AgentStats/AgentStats";
 import dashboardRoutes from "routes/dashboard.jsx";
 import UserProfile from "../../views/UserProfile/UserProfile";
-import { messaging } from "../../init-fcm";
+// import { messaging } from "../../init-fcm";
 import NotificationAlert from "react-notification-alert";
 
 var ps;
@@ -53,73 +53,73 @@ class Dashboard extends React.Component {
       ps = new PerfectScrollbar(this.refs.mainPanel);
       document.body.classList.toggle("perfect-scrollbar-on");
     }
-    messaging
-      .requestPermission()
-      .then(async function() {
-        const token = await messaging.getToken();
-        console.log(token);
-      })
-      .catch(function(err) {
-        console.log("Unable to get permission to notify.", err);
-      });
+    // messaging
+    //   .requestPermission()
+    //   .then(async function() {
+    //     const token = await messaging.getToken();
+    //     console.log(token);
+    //   })
+    //   .catch(function(err) {
+    //     console.log("Unable to get permission to notify.", err);
+    //   }); 
 
-    navigator.serviceWorker.addEventListener("message", message => {
-      messaging.onMessage(payload => {
-        console.log(payload);
-        const body = JSON.parse(payload.notification.body);
-        if ("url" in body) {
-          const url = body.url;
-          const active = body.active;
-          const timestamp = body.Timestamp;
-          const msg = (
-            <div>
-              <h6>Tricloud Web Monitor</h6>
-              <div>
-                <p>
-                  <strong>Url:</strong> {url}
-                  <br />
-                  <strong>Status :</strong> {active ? "UP" : "DOWN"}
-                  <br />
-                  <strong>TimeStamp:</strong>
-                  {timestamp}
-                </p>
-              </div>
-            </div>
-          );
-          if (active !== true) {
-            var msg_type = "danger";
-          } else {
-            var msg_type = "success";
-          }
-          this.alert(msg_type, msg);
-        } else {
-          const agentid = body.Agentid;
+    // navigator.serviceWorker.addEventListener("message", message => {
+    //   messaging.onMessage(payload => {
+    //     console.log(payload);
+    //     const body = JSON.parse(payload.notification.body);
+    //     if ("url" in body) {
+    //       const url = body.url;
+    //       const active = body.active;
+    //       const timestamp = body.Timestamp;
+    //       const msg = (
+    //         <div>
+    //           <h6>Tricloud Web Monitor</h6>
+    //           <div>
+    //             <p>
+    //               <strong>Url:</strong> {url}
+    //               <br />
+    //               <strong>Status :</strong> {active ? "UP" : "DOWN"}
+    //               <br />
+    //               <strong>TimeStamp:</strong>
+    //               {timestamp}
+    //             </p>
+    //           </div>
+    //         </div>
+    //       );
+    //       if (active !== true) {
+    //         var msg_type = "danger";
+    //       } else {
+    //         var msg_type = "success";
+    //       }
+    //       this.alert(msg_type, msg);
+    //     } else {
+    //       const agentid = body.Agentid;
 
-          const timestamp = body.Timestamp;
-          const event = body.Events[0];
-          const title = event.Type;
-          const event_msg = event.Message;
-          const msg = (
-            <div>
-              <h6>{title}</h6>
-              <div>
-                <p>
-                  <strong>AgentID:</strong> {agentid}
-                  <br />
-                  <strong>Remarks :</strong> {event_msg}
-                  <br />
-                  <strong>TimeStamp:</strong>
-                  {timestamp}
-                </p>
-              </div>
-            </div>
-          );
+    //       const timestamp = body.Timestamp;
+    //       const event = body.Events[0];
+    //       const title = event.Type;
+    //       const event_msg = event.Message;
+    //       const msg = (
+    //         <div>
+    //           <h6>{title}</h6>
+    //           <div>
+    //             <p>
+    //               <strong>AgentID:</strong> {agentid}
+    //               <br />
+    //               <strong>Remarks :</strong> {event_msg}
+    //               <br />
+    //               <strong>TimeStamp:</strong>
+    //               {timestamp}
+    //             </p>
+    //           </div>
+    //         </div>
+    //       );
 
-          var msg_type = "danger";
-          this.alert(msg_type, msg);
-        }
-      });
-    });
+    //       var msg_type = "danger";
+    //       this.alert(msg_type, msg);
+    //     }
+    //   });
+    // });
   }
   componentWillUnmount() {
     if (navigator.platform.indexOf("Win") > -1) {

@@ -33,22 +33,27 @@
         });
         cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
           console.log("New background FCM message: ", payload);
-          cordova.plugins.notification.local.schedule({
-            title: payload.gcm.title,
-            text: payload.gcm.body,
-            foreground: true
-          });
-        });
-        cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
-          console.log("New background FCM message: ", payload);
+          const body = JSON.parse(payload.gcm.body)
+          const url = body.url;
+          const status = body.active?"UP":"Down";
           cordova.plugins.notification.local.schedule({
             title: payload.gcm.title,
             text: payload.gcm.body,
             foreground: false
           });
+          navigator.notification.beep(2);
         });
         cordova.plugins.firebase.messaging.onMessage(function(payload) {
-          console.log("New foreground FCM message: ", payload);
+          console.log("New background FCM message: ", payload);
+          const body = JSON.parse(payload.gcm.body)
+          const url = body.url;
+          const status = body.active?"UP":"Down";
+          cordova.plugins.notification.local.schedule({
+            title: payload.gcm.title,
+            text: payload.gcm.body,
+            foreground: true
+          });
+        navigator.notification.beep(2);
         });
       });
     </script>
