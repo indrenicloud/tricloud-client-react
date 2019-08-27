@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
 import { Terminal as xTerm } from "xterm";
-import './Terminal.css';
-import * as fit from 'xterm/lib/addons/fit/fit';
+import "./Terminal.css";
+import * as fit from "xterm/lib/addons/fit/fit";
 
 class Terminal extends Component {
   constructor(props) {
@@ -11,14 +11,13 @@ class Terminal extends Component {
     this.myref = React.createRef();
     this.onMessage = this.onMessage.bind(this);
     this.outputFromAgent = this.outputFromAgent.bind(this);
-   
   }
 
   // input and stuff from xtermjs
   onMessage(data) {
     console.log(typeof data);
     console.log(data);
-    this.props.sendtows(data);
+    this.props.sendtows({ Data: data }, 2);
   }
 
   outputFromAgent(output) {
@@ -37,17 +36,22 @@ class Terminal extends Component {
   }
 
   render() {
-    return <div ref={this.myref} style={{
-      overflow: 'hidden',
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-    }}
-    options={{
-      cols: 80,
-      rows: 24,
-      cursorBlink: false,
-    }} />;
+    return (
+      <div
+        ref={this.myref}
+        style={{
+          overflow: "hidden",
+          position: "relative",
+          width: "100%",
+          height: "100%"
+        }}
+        options={{
+          cols: 80,
+          rows: 24,
+          cursorBlink: false
+        }}
+      />
+    );
   }
 }
 

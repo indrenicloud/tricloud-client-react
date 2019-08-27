@@ -11,6 +11,13 @@ export default class TaskManager extends Component {
     });
     this.dataloaded = false;
     this.killProcess = this.killProcess.bind(this);
+    this.updateTerminal = this.updateTerminal.bind(this);
+  }
+
+  componentDidUpdate() {
+    if (!this.dataloaded) {
+      this.props.SendToWs({ Interval: 5, Timeout: 200 }, 3);
+    }
   }
 
   getFilteredProcesses = () =>
@@ -19,16 +26,16 @@ export default class TaskManager extends Component {
       else return true;
     });
 
-  updateTerminal = data => {
-    console.log(data);
+  updateTerminal(data) {
+    console.log("term---------------", data);
     this.dataloaded = true;
     this.setState({
       termdata: data.Processes
     });
-  };
+  }
 
-  killProcess(key) {
-    this.props.sendtoTaskmgr(key, "kill");
+  killProcess(pid) {
+    this.props.SendToWs({ PID: pid, Action: "kill" }, 4);
   }
 
   render() {

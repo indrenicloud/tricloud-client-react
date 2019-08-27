@@ -16,6 +16,13 @@ export default class Api {
     });
   }
 
+  putData(route, data) {
+    return this.fetch(this.API_URL + route, {
+      method: "PUT",
+      body: JSON.stringify(data)
+    });
+  }
+
   deleteData(route) {
     return this.fetch(this.API_URL + route, {
       method: "DELETE"

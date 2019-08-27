@@ -1,14 +1,5 @@
 import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Table,
-  Row,
-  Col,
-  CardFooter
-} from "reactstrap";
+import { Card, CardBody, CardHeader, CardTitle, Table, Row, Col, CardFooter } from "reactstrap";
 import { Link, Route } from "react-router-dom";
 import NotificationAlert from "react-notification-alert";
 import Websocket from "react-websocket";
@@ -24,17 +15,9 @@ import "./AgentDetail.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import MemDonut from "components/MemDonut/MemDonut";
-import {
-  parsePacket,
-  encodeMsg,
-  CMD_PROCESS_ACTION,
-  CMD_AGENTSBROADCAST,
-  CMD_SYSTEM_STAT,
-  CMD_TERMINAL,
-  CMD_TASKMGR,
-  formatBytes
-} from "../../service/utility";
+import { parsePacket, encodeMsg, CMD_PROCESS_ACTION, CMD_AGENTSBROADCAST, CMD_SYSTEM_STAT, CMD_TERMINAL, CMD_FM_LISTDIR, CMD_TASKMGR, formatBytes, CMD_EVENTS, CMD_DOWNLOAD_SERVICE, CMD_FM_ACTION } from "../../service/utility";
 import TaskManager from "../../components/TaskManager/TaskManager";
+import FileManager from "../../components/FileManager/FileManager";
 
 const api = new Api();
 
@@ -56,15 +39,15 @@ class AgentDetail extends Component {
     };
     this.getAgentData = this.getAgentData.bind(this);
     this.webSocketResponse = this.webSocketResponse.bind(this);
-    this.terminalToWs = this.terminalToWs.bind(this);
+
     this.ProcessTerminal = this.ProcessTerminal.bind(this);
     this.ProcessSystemStat = this.ProcessSystemStat.bind(this);
-    this.startTerminal = this.startTerminal.bind(this);
     this.ProcessAgentsBroadcast = this.ProcessAgentsBroadcast.bind(this);
-    this.processAction = this.processAction.bind(this);
+    this.SendToWs = this.SendToWs.bind(this);
     this.terminalRef = React.createRef();
     this.websocketRef = React.createRef();
     this.taskmanagerRef = React.createRef();
+    this.FileManagerRef = React.createRef();
     this.sys_usage = {};
     this.head = {};
   }
@@ -90,7 +73,7 @@ class AgentDetail extends Component {
     myReader.addEventListener("loadend", e => {
       let [head, body] = parsePacket(e.srcElement.result);
 
-      console.log(head, body);
+      // console.log(head, body);
 
       if (head.cmdtype == CMD_PROCESS_ACTION) {
         console.log("SOMETHING KILLED");
@@ -100,6 +83,25 @@ class AgentDetail extends Component {
         this.ProcessAgentsBroadcast(head, body);
         return;
       }
+
+      if (head.cmdtype == CMD_EVENTS) {
+        // PEPSI Events alert here
+        console.log(body);
+        let options = {
+          type: "success",
+          place: "tr",
+          message: (
+            <div>
+              <div>{"Event about sth"}</div>
+            </div>
+          ),
+          icon: "nc-icon nc-bell-55",
+          autoDismiss: 7
+        };
+        //this.refs.NotificationAlert(options);
+        return;
+      }
+
       if (this.connid != head.connid) {
         console.log("THIS PACKET");
         console.log(body);
@@ -119,6 +121,15 @@ class AgentDetail extends Component {
           if (_func != null) {
             _func(body);
           }
+          console.log("CMD_TASK", body);
+          break;
+        case CMD_FM_LISTDIR:
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%%");
+          this.FileManagerRef.current.inData(body);
+          break;
+        case CMD_DOWNLOAD_SERVICE || CMD_FM_ACTION:
+          console.log("its at downloadervice");
+          this.FileManagerRef.current.actionDone(head, body);
           break;
         default:
           console.log("Not implemented");
@@ -144,9 +155,7 @@ class AgentDetail extends Component {
     this.sys_usage = respBody;
     let stat_timestamp = this.sys_usage["TimeStamp"];
     let cpu_cores = this.sys_usage["CPUPercent"];
-    let totalcpu_usage = cpu_cores.reduce(
-      (previous, current) => (current += previous)
-    );
+    let totalcpu_usage = cpu_cores.reduce((previous, current) => (current += previous));
     let avgcpu_usage = Math.round(totalcpu_usage / cpu_cores.length);
     let allcpu_usage = cpu_cores;
 
@@ -156,10 +165,7 @@ class AgentDetail extends Component {
     let mem_usage = [{ inits: "Free", value: 1 }, { inits: "Used", value: 99 }];
 
     if (total_mem && free_mem) {
-      mem_usage = [
-        { inits: "Free", value: free_mem },
-        { inits: "Used", value: total_mem - free_mem }
-      ];
+      mem_usage = [{ inits: "Free", value: free_mem }, { inits: "Used", value: total_mem - free_mem }];
     }
 
     let new_sentbytes = this.sys_usage["NetSentbytes"];
@@ -193,26 +199,11 @@ class AgentDetail extends Component {
     });
   }
 
-  startTerminal() {
-    let out = encodeMsg({ Data: "" }, this.connid, CMD_TERMINAL, 1);
+  SendToWs(dataobj, _cmdType) {
+    let out = encodeMsg(dataobj, this.connid, _cmdType, 1);
     this.websocketRef.current.sendMessage(out);
   }
 
-  terminalToWs(data) {
-    let out = encodeMsg({ Data: data }, this.connid, CMD_TERMINAL, 1);
-    this.websocketRef.current.sendMessage(out);
-  }
-  processAction(pid, action) {
-    let out = encodeMsg(
-      { PID: pid, Action: action },
-      this.connid,
-      CMD_PROCESS_ACTION,
-      1
-    );
-    this.websocketRef.current.sendMessage(out);
-  }
-  rebootAgent() {}
-  shutdownAgent() {}
   render() {
     var agentinfo = Object.entries(this.state.agentinfo).map(([key, value]) => {
       if (key === "firstadded" || key === "lastlogin") {
@@ -232,17 +223,15 @@ class AgentDetail extends Component {
         </div>
       );
     });
-    var systeminfo = Object.entries(this.state.systeminfo).map(
-      ([key, value]) => {
-        if (value.length > 0) {
-          return (
-            <div>
-              {key} : {value.toString()}
-            </div>
-          );
-        }
+    var systeminfo = Object.entries(this.state.systeminfo).map(([key, value]) => {
+      if (value.length > 0) {
+        return (
+          <div>
+            {key} : {value.toString()}
+          </div>
+        );
       }
-    );
+    });
 
     // let total_mem = this.sys_usage["TotalMem"];
     // let free_mem = this.sys_usage["AvailableMem"];
@@ -260,6 +249,16 @@ class AgentDetail extends Component {
 
     //console.log(api.getToken());
     //dashboard-level
+    const rebootAgent = () => {
+      if (this.websocketRef.current != null) {
+        this.SendToWs({ Action: "reboot" }, 13);
+      }
+    };
+    const shutdownAgent = () => {
+      if (this.websocketRef.current != null) {
+        this.SendToWs({ Action: "shutdown" }, 13);
+      }
+    };
     return (
       <div className="content">
         <Row>
@@ -268,13 +267,15 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title agent_info_title"}>
-                      Agent Info
-                    </h3>
+                    <h3 className={"card-title agent_info_title"}>Agent Info</h3>
                     <div id="agentinfo">{agentinfo}</div>
                     <div>
-                      <button onClick={this.rebootAgent()}>Reboot</button>
-                      <button onClick={this.shutdownAgent()}>Shutdown</button>
+                      <Link to="#">
+                        <img onClick={() => rebootAgent()} alt="Reboot" title="Reboot" src="https://img.icons8.com/color/96/000000/restart.png" />
+                      </Link>
+                      <Link to="#">
+                        <img onClick={() => shutdownAgent()} alt="Shutdown" title="Shutdown" src="https://img.icons8.com/color/96/000000/shutdown.png" />
+                      </Link>
                     </div>
                   </Col>
                 </Row>
@@ -288,9 +289,7 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title system_info_title"}>
-                      System Details
-                    </h3>
+                    <h3 className={"card-title system_info_title"}>System Details</h3>
                     <div id="system_details">{systeminfo}</div>
                   </Col>
                 </Row>
@@ -311,14 +310,10 @@ class AgentDetail extends Component {
                   </Col>
                 </Row>
                 <div className="stats">
-                  <span>
-                    Total CPU Cores : {this.state.allcpu_usage.length}
-                  </span>
+                  <span>Total CPU Cores : {this.state.allcpu_usage.length}</span>
                   <ul id="allcpu_usage" className={"allcpu_usage"}>
                     {Object.keys(this.state.allcpu_usage).map(key => {
-                      return (
-                        <li>{Math.round(this.state.allcpu_usage[key])}% </li>
-                      );
+                      return <li>{Math.round(this.state.allcpu_usage[key])}% </li>;
                     })}
                   </ul>
                 </div>
@@ -326,9 +321,7 @@ class AgentDetail extends Component {
               <CardFooter>
                 <Row>
                   <Col>
-                    <h3 className="avgcpu_stats center">
-                      {this.state.avgcpu_usage}%{" "}
-                    </h3>
+                    <h3 className="avgcpu_stats center">{this.state.avgcpu_usage}% </h3>
                   </Col>
                 </Row>
               </CardFooter>
@@ -339,14 +332,9 @@ class AgentDetail extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <h3 className={"card-title mem_usage_title"}>
-                      Memory Usage
-                    </h3>
+                    <h3 className={"card-title mem_usage_title"}>Memory Usage</h3>
                     <div id="mem_usagebar">
-                      <MemDonut
-                        className="memory-donut"
-                        memory={this.state.memusage}
-                      />
+                      <MemDonut className="memory-donut" memory={this.state.memusage} />
                     </div>
                   </Col>
                 </Row>
@@ -372,8 +360,7 @@ class AgentDetail extends Component {
                   </Col>
                   <Col>
                     <div className="netspeed_stats center">
-                      <i className="nc-icon nc-minimal-down" />{" "}
-                      {formatBytes(this.state.netspeed["down"], true)}/s
+                      <i className="nc-icon nc-minimal-down" /> {formatBytes(this.state.netspeed["down"], true)}/s
                     </div>
                   </Col>
                 </Row>
@@ -381,14 +368,10 @@ class AgentDetail extends Component {
               <CardFooter>
                 <Row>
                   <Col>
-                    <div className="netusage_stats center">
-                      {formatBytes(this.state.netusage["sentbytes"], true)}
-                    </div>
+                    <div className="netusage_stats center">{formatBytes(this.state.netusage["sentbytes"], true)}</div>
                   </Col>
                   <Col>
-                    <div className="netusage_stats center">
-                      {formatBytes(this.state.netusage["recvbytes"], true)}{" "}
-                    </div>
+                    <div className="netusage_stats center">{formatBytes(this.state.netusage["recvbytes"], true)} </div>
                   </Col>
                 </Row>
               </CardFooter>
@@ -400,6 +383,7 @@ class AgentDetail extends Component {
           onClick={this.startTerminal}
           name="Terminal start"
         /> */}
+
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
             <Card>
@@ -407,10 +391,23 @@ class AgentDetail extends Component {
                 <Row>
                   <Col>
                     <h3 className={"card-title "}>Terminal</h3>
-                    <Terminal
-                      ref={this.terminalRef}
-                      sendtows={this.terminalToWs}
-                    />
+                    <Terminal ref={this.terminalRef} sendtows={this.SendToWs} />
+                  </Col>
+                </Row>
+              </CardBody>
+              <CardFooter />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* File Manager */}
+        <Row>
+          <Col xs={12} sm={12} md={12} lg={12}>
+            <Card className="fm-card">
+              <CardBody className="fm-cardbody">
+                <Row>
+                  <Col>
+                    <FileManager ref={this.FileManagerRef} SendToWs={this.SendToWs} notify={this.props.notify} />
                   </Col>
                 </Row>
               </CardBody>
@@ -426,46 +423,19 @@ class AgentDetail extends Component {
                 <Row>
                   <Col>
                     <h3 className={"card-title "}>Task Manager</h3>
-                    <TaskManager
-                      ref={this.taskmanagerRef}
-                      sendtoTaskmgr={this.processAction}
-                    />
+                    <TaskManager ref={this.taskmanagerRef} SendToWs={this.SendToWs} />
                   </Col>
                 </Row>
               </CardBody>
-              <CardFooter>
-                <button
-                  onClick={event => {
-                    console.log(event);
-                    let out = encodeMsg(
-                      { Interval: 5, Timeout: 200 },
-                      this.connid,
-                      CMD_TASKMGR,
-                      1
-                    );
-                    this.websocketRef.current.sendMessage(out);
-                  }}
-                >
-                  Show Processes
-                </button>
-              </CardFooter>
+              <CardFooter />
             </Card>
           </Col>
         </Row>
 
-        <Websocket
-          url={
-            "ws://" +
-            process.env.REACT_APP_API_URL +
-            "/websocket/" +
-            api.getToken()
-          }
-          ref={this.websocketRef}
-          onMessage={this.webSocketResponse.bind(this)}
-        />
+        <Websocket url={"ws://" + process.env.REACT_APP_API_URL + "/websocket/" + api.getToken()} ref={this.websocketRef} onMessage={this.webSocketResponse.bind(this)} />
       </div>
     );
   }
 }
 
-export default AgentDetail;
+export default withAuth(AgentDetail);

@@ -29,7 +29,7 @@ export default function withAuth(AuthComponent) {
 
     render() {
       if (this.state.user) {
-        return <AuthComponent history={this.props.history} user={this.state.user} match={this.props.match} />;
+        return <AuthComponent history={this.props.history} user={this.state.user} match={this.props.match} notify={this.props.notify} />;
       } else {
         return null;
       }
