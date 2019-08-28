@@ -25,7 +25,8 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" />
     <script type="text/javascript" src="cordova.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
     <script type="text/javascript">
       document.addEventListener("deviceready", function() {
         cordova.plugins.firebase.messaging.getToken().then(function(token) {
@@ -34,11 +35,26 @@
         cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
           console.log("New background FCM message: ", payload);
           const body = JSON.parse(payload.gcm.body)
-          const url = body.url;
-          const status = body.active?"UP":"Down";
+          let msg ="";
+          if(body.Type ==="webalert"){
+            const url = body.Data.url;
+            const status = body.Data.active?"UP":"Down";
+            msg = `URL: ${url}\nStatus: ${status} `;
+          }
+          else if(body.Type ==="agentalert"){
+            const agentid = body.Data.Agentid;
+            const alerttype = body.Data.Events[0].Type;
+            const remark = body.Data.Events[0].Message;
+            const timestamp = body.Data.Timestr;
+            msg = `Agent : ${agentid}\nAlert : ${alerttype}\nRemark: ${remark}\nTime: ${timestamp}`;
+          }
+          else{
+            msg = payload.gcm.body;
+          }
+        
           cordova.plugins.notification.local.schedule({
             title: payload.gcm.title,
-            text: payload.gcm.body,
+            text: msg,
             foreground: false
           });
           navigator.notification.beep(2);
@@ -46,19 +62,39 @@
         cordova.plugins.firebase.messaging.onMessage(function(payload) {
           console.log("New background FCM message: ", payload);
           const body = JSON.parse(payload.gcm.body)
-          const url = body.url;
-          const status = body.active?"UP":"Down";
+          let msg = "";
+          if(body.Type ==="webalert"){
+            const url = body.Data.url;
+            const status = body.Data.active?"UP":"Down";
+            msg = `URL: ${url}\nStatus: ${status} `;
+          }
+          else if(body.Type ==="agentalert"){
+            const agentid = body.Data.Agentid;
+            const alerttype = body.Data.Events[0].Type;
+            const remark = body.Data.Events[0].Message;
+            const timestamp = body.Data.Timestr;
+            msg = `Agent : ${agentid}\nAlert : ${alerttype}\nRemark: ${remark}\nTime: ${timestamp}`;
+          }
+          else{
+            msg = payload.gcm.body;
+          }
+        
           cordova.plugins.notification.local.schedule({
             title: payload.gcm.title,
-            text: payload.gcm.body,
+            text: msg,
             foreground: true
           });
+          new Noty({
+              type: 'info',
+              layout: 'topRight',
+              timeout: 700,
+              text: msg
+          }).show();
         navigator.notification.beep(2);
         });
       });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
+   
     <title>TriCloud Server Monitoring and Management System</title>
   </head>
   <body>
