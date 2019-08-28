@@ -1,0 +1,32 @@
+diff --git a/node_modules/react-websocket/build/index.js b/node_modules/react-websocket/build/index.js
+index 98d0d43..8d55fd9 100644
+--- a/node_modules/react-websocket/build/index.js
++++ b/node_modules/react-websocket/build/index.js
+@@ -152,8 +152,11 @@ return /******/ (function(modules) { // webpackBootstrap
+ 	  }, {
+ 	    key: 'sendMessage',
+ 	    value: function sendMessage(message) {
++
+ 	      var websocket = this.state.ws;
+-	      websocket.send(message);
++	       if (websocket.readyState === WebSocket.OPEN) {
++        websocket.send(message);
++     } 
+ 	    }
+ 	  }, {
+ 	    key: 'render',
+diff --git a/node_modules/react-websocket/index.jsx b/node_modules/react-websocket/index.jsx
+index 87160e7..7038672 100644
+--- a/node_modules/react-websocket/index.jsx
++++ b/node_modules/react-websocket/index.jsx
+@@ -66,7 +66,9 @@ class Websocket extends React.Component {
+ 
+     sendMessage(message){
+       let websocket = this.state.ws;
+-      websocket.send(message);
++      if (websocket.readyState === WebSocket.OPEN) {
++        websocket.send(message);
++     } 
+     }
+ 
+     render() {
