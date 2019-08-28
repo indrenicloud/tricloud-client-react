@@ -52,6 +52,7 @@ class Login extends Component {
                this.props.history.replace('/dashboard');
             })
             .catch(err =>{
+                console.log(err);
                 alert("Unable to login");
             })
     }
