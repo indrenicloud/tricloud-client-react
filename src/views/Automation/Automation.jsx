@@ -68,10 +68,14 @@ class Automation extends Component {
   runScripts(name) {
     api.getData("/api/scripts/" + name + "/run").then(resp => {
       console.log(resp.data);
-
-        this.setState({
-          scripts: resp.data
-        });
+      if (resp.status == "ok") {
+        const msg = "Script " + name + " has been executed successfully !";
+        this.props.notify(msg, "success");
+        this.getScripts();
+      } else {
+        this.props.notify("Script " + name + " execution action failed !", "warning");
+      }
+      this.getScripts();
     });
   }
 
@@ -124,8 +128,6 @@ class Automation extends Component {
       }
     });
   }
-
-
 
 
   render() {
