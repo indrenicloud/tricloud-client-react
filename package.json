@@ -13,7 +13,7 @@
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "node-sass": "4.13.1",
+    "node-sass": "7.0.0",
     "patch-package": "^6.1.2",
     "perfect-scrollbar": "1.4.0",
     "prop-types": "^15.7.2",
